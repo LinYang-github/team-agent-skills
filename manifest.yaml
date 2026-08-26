@@ -20,7 +20,7 @@ skills:
     depends_on:
       - common-coding-standards
   - name: frontend-coding-standard
-    version: 1.0.0
+    version: 1.1.0
     status: active
     owner: engineering
     depends_on:
@@ -32,7 +32,7 @@ skills:
     depends_on:
       - common-coding-standards
   - name: ui-ux-standards
-    version: 1.0.0
+    version: 1.1.0
     status: active
     owner: frontend-platform
     depends_on: []
