@@ -1,0 +1,4 @@
+interface:
+  display_name: "代码审查"
+  short_description: "审查代码变更与部署交付风险"
+  default_prompt: "使用 $code-review 审查当前变更，并输出按严重程度排序、带证据和验证结果的报告。"

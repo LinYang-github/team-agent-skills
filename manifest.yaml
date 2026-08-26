@@ -1,0 +1,38 @@
+schema_version: 1
+repository: team-agent-skills
+default_branch: main
+skills:
+  - name: common-coding-standards
+    version: 1.0.0
+    status: active
+    owner: engineering
+    depends_on: []
+  - name: code-review
+    version: 1.0.0
+    status: active
+    owner: engineering
+    depends_on:
+      - common-coding-standards
+  - name: cpp-coding-standard
+    version: 0.1.0
+    status: active
+    owner: engineering
+    depends_on:
+      - common-coding-standards
+  - name: frontend-coding-standard
+    version: 1.0.0
+    status: active
+    owner: engineering
+    depends_on:
+      - common-coding-standards
+  - name: go-coding-standards
+    version: 1.0.0
+    status: active
+    owner: engineering
+    depends_on:
+      - common-coding-standards
+  - name: ui-ux-standards
+    version: 1.0.0
+    status: active
+    owner: frontend-platform
+    depends_on: []

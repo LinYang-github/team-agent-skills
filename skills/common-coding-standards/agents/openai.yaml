@@ -1,0 +1,4 @@
+interface:
+  display_name: "Common Coding Standards"
+  short_description: "统一跨语言项目的通用编码规范"
+  default_prompt: "请按通用编码规范审查或实现当前项目，并结合项目语言技能给出可验证的修改方案。"

@@ -1,0 +1,8 @@
+interface:
+  display_name: "UI/UX 统一规范"
+  short_description: "统一多个前端项目的视觉语言、交互模式与页面体验规范"
+  brand_color: "#2563EB"
+  default_prompt: "使用 $ui-ux-standards 审查并改进当前前端页面的视觉与交互一致性。"
+policy:
+  allow_implicit_invocation: true
+

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Go Coding Standards"
+  short_description: "统一 Go 项目的工程编码实践"
+  default_prompt: "请同时遵循 common-coding-standards 和 Go 编码规范，审查或实现当前 Go 项目。"

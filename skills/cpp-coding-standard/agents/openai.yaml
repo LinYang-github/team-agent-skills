@@ -1,0 +1,4 @@
+interface:
+  display_name: "C++ Coding Standard"
+  short_description: "统一 C++ 项目的工程实现与质量实践"
+  default_prompt: "使用 $cpp-coding-standard 设计、实现或审查 C++ 工程。"

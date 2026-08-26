@@ -1,0 +1,7 @@
+interface:
+  display_name: "前端工程编码规范"
+  short_description: "统一企业前端的架构、安全、性能、路由、Mock、测试与发布实践"
+  brand_color: "#0F766E"
+  default_prompt: "使用 $frontend-coding-standard 审查并改进当前前端功能的工程实现。"
+policy:
+  allow_implicit_invocation: true
