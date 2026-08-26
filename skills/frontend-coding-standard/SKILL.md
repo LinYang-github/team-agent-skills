@@ -64,6 +64,7 @@ description: 统一企业级前端项目的工程实现方式，默认采用 Vue
 13. **性能可度量。** 只有基于真实基线、用户任务和构建数据的优化才进入规范；不以抽象或微优化掩盖包体积、请求瀑布、渲染阻塞和内存泄漏。
 14. **嵌入边界显式。** 独立 URL、npm 包、Web Component、微前端和 iframe 是不同维度的访问、交付或运行时方案；按宿主、隔离、部署和维护边界选择，不为形式预先实现所有模式。支持嵌入的页面必须有版本化宿主契约和可运行的 Integration Portal。
 15. **资源来源可控。** 构建、测试和生产运行不依赖未锁定的在线资源；字体、图标、图片、脚本和样式优先随包交付并可离线复现，业务后端 API 按项目接口契约处理。
+16. **原生语义与视觉解耦。** 保留 HTML 原生语义、键盘能力和无障碍属性，但业务页面不得直接暴露由浏览器或操作系统决定的复杂视觉表面；选择器、日期、颜色、滑块、开关、弹层和表单反馈应通过统一组件实现。
 
 ## 决策优先级
 
@@ -114,6 +115,7 @@ description: 统一企业级前端项目的工程实现方式，默认采用 Vue
 - TypeScript/JavaScript、Vue 组件、组合式函数、命名和副作用：阅读 references/language-and-vue.md。
 - API 请求、鉴权、错误、加载、并发、缓存和数据契约：阅读 references/api-and-state.md。
 - 前端路由、Mock、样式管理和日志输出：阅读 references/frontend-platform-practices.md。
+- 原生控件、公共表单组件、键盘/焦点和浏览器默认视觉治理：阅读 references/native-controls-and-components.md。
 - 前端安全、敏感数据、文件处理和依赖供应链：阅读 references/security-and-data.md。
 - 性能、资源加载、渲染、内存和浏览器兼容：阅读 references/performance-and-browser.md。
 - 无障碍工程实现、语义 HTML、ARIA 和焦点管理：阅读 references/accessibility-implementation.md。
