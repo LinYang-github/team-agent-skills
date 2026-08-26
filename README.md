@@ -12,6 +12,7 @@
 | `frontend-coding-standard` | Vue/TypeScript 企业级前端工程规范 | active |
 | `go-coding-standards` | Go 服务、并发、配置、错误和测试规范 | active |
 | `ui-ux-standards` | 桌面端 UI/UX 视觉和交互规范 | active |
+| `playwright-tester` | Playwright 测试生成规范 | active |
 
 开源或外部来源的 Skill 不纳入本仓库的内部版本治理。
 

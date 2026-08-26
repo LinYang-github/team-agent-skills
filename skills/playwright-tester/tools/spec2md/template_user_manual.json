@@ -1,0 +1,51 @@
+{
+  "actions": {
+    "fill": "填写“{name}”为{value}",
+    "click": "点击“{name}”",
+    "click_field": "点击“{name}”输入框",
+    "click_button": "点击“{name}”按钮",
+    "click_menu": "点击“{name}”菜单",
+    "check": "勾选“{name}”",
+    "uncheck": "取消勾选“{name}”",
+    "selectOption": "选择“{name}”为{value}",
+    "press": "在“{name}”按下{value}"
+  },
+  "assertions": {
+    "toContainText": "页面显示{text}",
+    "toHaveText": "页面显示{text}",
+    "toBeVisible": "进入“{name}”界面",
+    "toBeHidden": "关闭“{name}”界面",
+    "toHaveTitle": "进入{text}",
+    "toHaveURL": "进入目标页面",
+    "toHaveValue": "完成“{name}”信息填写",
+    "toBeEnabled": "“{name}”处于可操作状态",
+    "toBeDisabled": "“{name}”处于不可操作状态"
+  },
+  "step_lines": {
+    "step_no": "{step_no}",
+    "input_procedure": "{input_procedure}",
+    "expected_result": "{expected_result}",
+    "criteria": "实际结果与期望测试结果一致",
+    "note": "",
+    "action_separator": "；",
+    "fallback_input_procedure": "查看“{name}”",
+    "fallback_expected_result": "系统完成上述操作"
+  },
+  "user_manual": {
+    "heading_level": 3,
+    "input_label": "输入",
+    "output_label": "输出",
+    "step_label": "步骤{step_no_cn}",
+    "step_template": "{step_label}：{content}",
+    "sentence": "{actions}，{expected_result}",
+    "action_only_sentence": "{actions}",
+    "action_separator": "，",
+    "fallback_action": "查看系统处理结果",
+    "fallback_expected_result": "系统完成上述操作",
+    "figure_reference": "，如图 {figure_no} 所示",
+    "figure_start_no": 1,
+    "default_figure_caption": "操作结果",
+    "show_metadata": false,
+    "include_images": true
+  }
+}
