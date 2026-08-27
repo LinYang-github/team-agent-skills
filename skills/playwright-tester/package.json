@@ -1,0 +1,30 @@
+{
+  "name": "playwright-tester",
+  "version": "2.0.0",
+  "description": "面向 coding agent 的真实浏览器页面捕获与 Playwright spec 生成工具",
+  "author": "lackeyjb",
+  "main": "scripts/capture-playwright.js",
+  "files": [
+    "SKILL.md",
+    "scripts/",
+    "references/",
+    "tools/",
+    "package.json",
+    "README.md"
+  ],
+  "scripts": {
+    "capture": "node scripts/capture-playwright.js",
+    "spec2md": "tools/spec2md/spec2md"
+  },
+  "keywords": [
+    "playwright",
+    "browser-capture",
+    "spec-generation",
+    "spec2md",
+    "claude-skill"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}
