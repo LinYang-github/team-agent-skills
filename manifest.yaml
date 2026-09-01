@@ -31,6 +31,11 @@ skills:
     owner: engineering
     depends_on:
       - common-coding-standards
+  - name: playwright-tester
+    version: 2.0.0
+    status: active
+    owner: engineering
+    depends_on: []
   - name: ui-ux-standards
     version: 1.1.1
     status: active
