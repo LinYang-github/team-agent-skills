@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -13,6 +14,7 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
 MANIFEST = ROOT / "manifest.yaml"
+QUALITY_GATES = ROOT / "quality-gates.json"
 SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
 
 
@@ -104,6 +106,13 @@ if set(manifest) != directory_names:
         f"目录={sorted(directory_names)}，清单={sorted(manifest)}"
     )
 
+try:
+    quality_gates = json.loads(QUALITY_GATES.read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError) as exc:
+    fail(f"无法读取 quality-gates.json：{exc}")
+if quality_gates.get("schema_version") != 1:
+    fail("quality-gates.json 的 schema_version 必须为 1")
+
 for name, record in manifest.items():
     for dependency in record["depends_on"]:
         if dependency == name:
@@ -153,6 +162,7 @@ markdown_files.extend(sorted(SKILLS.glob("**/*.md")))
 checked_links = validate_local_links(markdown_files)
 
 shells = sorted((ROOT / "scripts").glob("*.sh"))
+shells.extend(sorted((ROOT / ".githooks").iterdir()))
 for script in shells:
     result = subprocess.run(
         ["bash", "-n", str(script)],
@@ -162,6 +172,21 @@ for script in shells:
     if result.returncode:
         fail(f"Shell 语法错误：{script.name}\n{result.stderr.strip()}")
 
+executables = [
+    ROOT / "scripts" / "quality_gate.py",
+    ROOT / "scripts" / "run-python.sh",
+    ROOT / "scripts" / "run-quality-gate.sh",
+    ROOT / "scripts" / "manage-git-hooks.sh",
+    ROOT / ".githooks" / "pre-commit",
+    ROOT / ".githooks" / "commit-msg",
+    ROOT / ".githooks" / "pre-push",
+]
+for executable in executables:
+    if not executable.is_file():
+        fail(f"缺少本地质量门禁入口：{executable.relative_to(ROOT)}")
+    if os.name != "nt" and not os.access(executable, os.X_OK):
+        fail(f"本地质量门禁入口没有可执行权限：{executable.relative_to(ROOT)}")
+
 pwsh = shutil.which("pwsh") or shutil.which("powershell")
 if pwsh:
     print(f"PowerShell 检查工具：{pwsh}；已保留为静态检查入口，未执行安装脚本。")
@@ -170,5 +195,5 @@ else:
 
 print(f"Skill 数量：{len(skill_dirs)}")
 print(f"本地 Markdown 链接：{checked_links}，有效性检查通过")
-print(f"Shell 安装脚本：{len(shells)}，语法检查通过")
+print(f"Shell 脚本与 Git Hook：{len(shells)}，语法检查通过")
 print("Skill 结构校验通过")

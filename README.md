@@ -32,6 +32,22 @@
 
 Claude 和 Grok 使用对应的安装脚本。Windows 使用同名 `.ps1` 脚本。默认安装不会覆盖本机已有同名 Skill；确认采用团队版本时显式添加 `--force` 或 `-Force`，脚本会先备份原目录。
 
+## 本地质量门禁
+
+仓库提供统一的本地检查器和 `pre-commit`、`commit-msg`、`pre-push` 三类 Git Hook。macOS/Linux 执行：
+
+```bash
+./scripts/manage-git-hooks.sh
+```
+
+Windows PowerShell 执行：
+
+```powershell
+./scripts/manage-git-hooks.ps1
+```
+
+Hook 只负责触发，强制规则和项目检查命令统一维护在 `quality-gates.json`。详细说明见 [本地质量门禁](docs/本地质量门禁.md)。
+
 ## 更新
 
 ```bash
@@ -42,6 +58,6 @@ git pull --rebase
 
 ## 参与维护
 
-请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [docs/使用指南.md](docs/使用指南.md)。Skill 变更必须经过校验和 Pull Request，不直接修改共享分支。
+请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [docs/使用指南.md](docs/使用指南.md)，并启用本地质量门禁。Skill 变更必须经过校验和 Pull Request，不直接修改共享分支。
 
 日常修改从 `develop` 创建类型化短分支，并通过 Pull Request 合回 `develop`；分支名称使用 `feature/*`、`fix/*`、`refactor/*`、`docs/*`、`test/*` 或 `chore/*` 等约定前缀。
