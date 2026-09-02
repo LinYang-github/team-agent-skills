@@ -2,6 +2,14 @@
 
 每个 Skill 是独立维护单元。Skill 必须包含有效的 `SKILL.md`，使用小写字母、数字和连字符命名，条件性内容放入 `references/`，并在 `manifest.yaml` 登记版本、状态、责任和依赖。不得包含密钥、Token、个人数据、本机路径或未锁定的在线资源。
 
+## Skill 命名
+
+- Skill ID 使用小写 ASCII 和 `kebab-case`，并与目录名及 `SKILL.md` 的 `name` 保持一致。
+- 单一语言或框架的编码规范使用 `<technology>-coding-standard`，例如 `cpp-coding-standard`。
+- 跨语言或包含多个主题的规范集合使用 `<scope>-standards`，例如 `common-coding-standards`。
+- 面向具体动作或工具的 Skill 使用清晰的能力名称，例如 `code-review`。
+- 已发布的 Skill ID 不因命名风格调整而重命名，避免破坏安装路径和外部引用；`go-coding-standards` 作为兼容性名称保留。
+
 ## 分支模型
 
 | 分支 | 用途 | 约束 |
@@ -16,7 +24,7 @@
 日常工作分支使用以下格式：
 
 ```text
-<类型>/<任务号>-<简短描述>
+<类型>/[<任务号>-]<简短描述>
 ```
 
 允许的类型：
@@ -51,7 +59,7 @@ release/v1.2.0
 ```bash
 git switch develop
 git pull --rebase
-git switch -c <类型>/<任务号>-<简短描述>
+git switch -c <类型>/[<任务号>-]<简短描述>
 ```
 
 提交信息使用：

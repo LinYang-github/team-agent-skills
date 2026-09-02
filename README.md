@@ -24,7 +24,7 @@
 ./scripts/install-codex-macos.sh
 ```
 
-安装全部 Skill：
+强制安装全部内部 Skill：
 
 ```bash
 ./scripts/install-codex-macos.sh --force
