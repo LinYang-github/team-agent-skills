@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,7 +57,8 @@ class QualityGateTests(unittest.TestCase):
         self.assertEqual(QUALITY_GATE.pushed_branches(line), ["develop"])
 
     def test_blocks_direct_push_to_protected_branch(self) -> None:
-        violations = QUALITY_GATE.validate_push_branches(["develop"], CONFIG)
+        with mock.patch.dict(os.environ, {"QUALITY_GATE_ALLOW_PROTECTED_PUSH": "0"}):
+            violations = QUALITY_GATE.validate_push_branches(["develop"], CONFIG)
         self.assertTrue(any("受保护分支" in item for item in violations))
 
     def test_detects_forbidden_secret_file(self) -> None:
