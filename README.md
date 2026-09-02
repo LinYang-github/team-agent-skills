@@ -43,3 +43,5 @@ git pull --rebase
 ## 参与维护
 
 请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [docs/使用指南.md](docs/使用指南.md)。Skill 变更必须经过校验和 Pull Request，不直接修改共享分支。
+
+日常修改从 `develop` 创建类型化短分支，并通过 Pull Request 合回 `develop`；分支名称使用 `feature/*`、`fix/*`、`refactor/*`、`docs/*`、`test/*` 或 `chore/*` 等约定前缀。
