@@ -1,0 +1,21 @@
+id: service-lifecycle
+title: Python 服务生命周期与容量边界
+description: 验证 Python Skill 能否补齐 asyncio 服务的任务引用、取消、阻塞调用、裸异常、有界并发、资源释放和验证命令。
+
+input:
+  prompt: |
+    一个 Python 3.11 的 asyncio TCP 服务在 __main__ 中用 asyncio.run(main()) 启动，端口写死；
+    每来一个连接就 asyncio.create_task(handler(conn))，返回的 Task 不保存任何引用；
+    handler 是 async 函数却用 time.sleep(10) 处理请求，阻塞事件循环，并用裸 except: 吞掉全部异常；
+    共享字典由 threading.Lock 保护却在持锁时 await 下游协程，连接用完不关闭；
+    没有类型注解、取消、超时、优雅退出、测试和静态分析配置。
+    请按团队 Python 工程规范给出最小整改方案和验证命令。若工具列表中存在团队 Skill，必须先加载；
+    加载 Skill 是本用例唯一允许的工具调用；若不存在团队 Skill，则直接作答。
+    不要读取或修改工作区，也不要调用其他工具，控制在 500 字以内。
+
+constraints:
+  timeout_seconds: 90
+  max_turns: 3
+
+expect:
+  exit_code: 0

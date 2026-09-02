@@ -1,0 +1,48 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**]
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/service-lifecycle.yaml
+  defaults:
+    timeout_seconds: 90
+    max_turns: 3
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["async void|async Task|async ValueTask"]
+    - output_matches:
+        any: ["CancellationToken|取消|超时"]
+    - output_matches:
+        any: ["using|Dispose|IAsyncDisposable"]
+    - output_matches:
+        any: ["\\.Result|\\.Wait\\(|GetAwaiter|阻塞"]
+    - output_matches:
+        any: ["有界|容量|背压|并发上限|SemaphoreSlim|Channel"]
+    - output_matches:
+        all: ["lock", "catch"]
+    - output_matches:
+        any: ["CancellationTokenSource|优雅退出|Shutdown|ProcessExit|CancelKeyPress|IHostApplicationLifetime"]
+    - output_matches:
+        all: ["dotnet test"]
+    - output_matches:
+        any: ["dotnet format|csharpier|EnableNETAnalyzers|TreatWarningsAsErrors|editorconfig|分析器"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]
