@@ -1,0 +1,19 @@
+id: military-workbench
+title: 军事业务工作台改造
+description: 验证 UI/UX Skill 能否识别营销式页面与桌面任务工作台之间的差异。
+
+input:
+  prompt: |
+    一个桌面端军事业务系统首页采用巨型渐变 Hero、嵌套卡片和大量圆角标签，
+    页面几乎全部使用蓝色，只验收浅色主题；表格长文本会遮挡按钮，加载、禁用、
+    键盘聚焦状态均未设计，字体和图标依赖 CDN。业务方只授权视觉与交互整改，不能改变字段和流程。
+    请按团队 UI/UX 规范给出改造重点和验收清单。若工具列表中存在团队 Skill，必须先加载；
+    加载 Skill 是本用例唯一允许的工具调用；若不存在团队 Skill，则直接作答。
+    不要读取或修改工作区，也不要调用其他工具，控制在 500 字以内。
+
+constraints:
+  timeout_seconds: 90
+  max_turns: 3
+
+expect:
+  exit_code: 0

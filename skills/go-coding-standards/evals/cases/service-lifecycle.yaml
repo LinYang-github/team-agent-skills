@@ -1,0 +1,19 @@
+id: service-lifecycle
+title: Go 服务生命周期与容量边界
+description: 验证 Go Skill 能否补齐服务启动、超时、取消、优雅退出和并发边界。
+
+input:
+  prompt: |
+    一个 Go HTTP 服务在 main 中用 http.ListenAndServe(":8080", nil) 启动；
+    每个请求都会 go process(req) 启动无上限 goroutine，process 不接收 context；
+    端口写死，没有信号处理、超时、优雅退出和竞态测试。
+    请按团队 Go 工程规范给出最小整改方案和验证命令。若工具列表中存在团队 Skill，必须先加载；
+    加载 Skill 是本用例唯一允许的工具调用；若不存在团队 Skill，则直接作答。
+    不要读取或修改工作区，也不要调用其他工具，控制在 500 字以内。
+
+constraints:
+  timeout_seconds: 90
+  max_turns: 3
+
+expect:
+  exit_code: 0

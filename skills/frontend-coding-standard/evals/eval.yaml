@@ -1,0 +1,55 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**]
+  - source: local_path
+    path: ../common-coding-standards
+    include: [SKILL.md, references/**]
+
+engine:
+  name: claude_code
+  model:
+    name: haiku
+
+cases:
+  files:
+    - evals/cases/vue-page-architecture.yaml
+  defaults:
+    timeout_seconds: 90
+    max_turns: 3
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["Vue 3|Vue3"]
+    - output_matches:
+        any: ["Composition API|script setup"]
+    - output_matches:
+        any: ["TypeScript|(^|[^A-Za-z])TS([^A-Za-z]|$)"]
+    - output_matches:
+        any: ["API 层|接口层|api/|请求层|request 模块"]
+    - output_matches:
+        any: ["Pinia|状态.*局部|状态.*边界"]
+    - output_matches:
+        any: ["Mock|mock"]
+    - output_matches:
+        any: ["alert|反馈组件|消息组件"]
+    - output_matches:
+        any: ["单元测试|组件测试|Vue Test Utils|Vitest"]
+    - output_matches:
+        any: ["构建|type-check|类型检查"]
+    - output_matches:
+        any: ["渐进|最小改动|不要.*重写"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]

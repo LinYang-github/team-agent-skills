@@ -1,0 +1,48 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**, scripts/**, tools/**]
+
+engine:
+  name: claude_code
+  model:
+    name: haiku
+
+cases:
+  files:
+    - evals/cases/no-service-no-credentials.yaml
+  defaults:
+    timeout_seconds: 90
+    max_turns: 3
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["不能.*成功|不得.*成功|不.*伪造|无法.*捕获"]
+    - output_matches:
+        any: ["storageState|登录状态|凭据"]
+    - output_matches:
+        any: ["start-command|启动命令|运行中的服务"]
+    - output_matches:
+        any: ["动态路由|:param|具体路由值"]
+    - output_matches:
+        any: ["破坏性|删除|保存|提交"]
+    - output_matches:
+        any: ["时间戳|历史版本"]
+    - output_contains:
+        all: ["capture-report.json", "test_case"]
+    - output_matches:
+        any: ["真实观察|浏览器实际|实际可见"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]

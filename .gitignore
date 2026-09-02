@@ -18,3 +18,4 @@ credentials*
 secrets*
 __pycache__/
 *.py[cod]
+skills/*-workspace/

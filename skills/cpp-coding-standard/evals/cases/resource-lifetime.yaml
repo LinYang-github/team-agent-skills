@@ -1,0 +1,32 @@
+id: resource-lifetime
+title: C++ 资源与线程生命周期
+description: 验证 C++ Skill 能否识别非拥有视图、裸资源和分离线程的生命周期风险。
+
+input:
+  prompt: |
+    下面的 C++20 类会跨函数保存 name，并启动后台任务：
+
+    ```cpp
+    class ExportTask {
+    public:
+      ExportTask(std::string_view name, const char* path)
+          : name_(name), file_(std::fopen(path, "wb")) {}
+      ~ExportTask() { if (file_) std::fclose(file_); }
+      void Start() { std::thread([this] { Run(); }).detach(); }
+    private:
+      void Run();
+      std::string_view name_;
+      FILE* file_;
+    };
+    ```
+
+    请按团队 C++ 工程规范给出修正方案和验证清单。若工具列表中存在团队 Skill，必须先加载；
+    加载 Skill 是本用例唯一允许的工具调用；若不存在团队 Skill，则直接作答。
+    不要读取或修改工作区，也不要调用其他工具，控制在 500 字以内。
+
+constraints:
+  timeout_seconds: 90
+  max_turns: 3
+
+expect:
+  exit_code: 0
