@@ -48,6 +48,16 @@ Windows PowerShell 执行：
 
 Hook 只负责触发，强制规则和项目检查命令统一维护在 `quality-gates.json`。详细说明见 [本地质量门禁](docs/本地质量门禁.md)。
 
+## Skill 测评
+
+各 Skill 的 `evals/` 目录保存基于 `skill-up` 的行为评测。单项复测命令：
+
+```bash
+skill-up run skills/<skill-name>/evals/eval.yaml --baseline --iteration 3
+```
+
+当前结果、评分口径和后续整改顺序见 [团队 Skill 测评报告](docs/团队Skill测评报告.md)。
+
 ## 更新
 
 ```bash

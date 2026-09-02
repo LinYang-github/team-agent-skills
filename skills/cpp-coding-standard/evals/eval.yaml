@@ -1,0 +1,49 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**]
+  - source: local_path
+    path: ../common-coding-standards
+    include: [SKILL.md, references/**]
+
+engine:
+  name: claude_code
+  model:
+    name: haiku
+
+cases:
+  files:
+    - evals/cases/resource-lifetime.yaml
+  defaults:
+    timeout_seconds: 90
+    max_turns: 3
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["std::string|拥有.*字符串|值语义"]
+    - output_matches:
+        any: ["RAII|unique_ptr|自定义删除器"]
+    - output_matches:
+        any: ["jthread|join"]
+    - output_matches:
+        any: ["stop_token|取消|停止"]
+    - output_matches:
+        any: ["异常.*边界|线程入口.*异常|异常.*线程入口|捕获.*异常|异常.*不外泄"]
+    - output_matches:
+        any: ["AddressSanitizer|ASan|UndefinedBehaviorSanitizer|UBSan"]
+    - output_matches:
+        any: ["ThreadSanitizer|TSan|竞态"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]
