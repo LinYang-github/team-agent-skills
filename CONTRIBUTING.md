@@ -56,6 +56,14 @@ release/v1.2.0
 
 ## 开发和提交
 
+首次参与仓库维护时先启用本地质量门禁：
+
+```bash
+./scripts/manage-git-hooks.sh
+```
+
+Windows PowerShell 使用 `./scripts/manage-git-hooks.ps1`。Hook 会校验暂存内容、提交信息、分支名称并在推送前执行 `quality-gates.json` 登记的完整检查。不得使用 `--no-verify` 绕过失败；规则误报应修正规则或增加有边界的白名单。
+
 ```bash
 git switch develop
 git pull --rebase
@@ -74,4 +82,4 @@ git switch -c <类型>/[<任务号>-]<简短描述>
 
 日常 Pull Request 以 `develop` 为目标分支；正式发布由 `release/*` 或 `develop` 向 `main` 发起。Pull Request 至少说明修改的 Skill、行为或边界影响、依赖同步、实际校验结果和已知限制。合并前必须通过 `./scripts/validate-skills.sh`。
 
-不得绕过 Pull Request 直接推送 `main` 和 `develop`，不得对任何共享分支强制推送。`release/*` 只承载发布准备修改，不得混入下一版本功能；紧急修复完成后必须将 `main` 中的修复同步回 `develop`。
+不得绕过 Pull Request 直接推送 `main` 和 `develop`，不得对任何共享分支强制推送。`pre-push` 会在本地阻断受保护分支直推；远端仍需配置分支保护和必需检查作为最终门禁。`release/*` 只承载发布准备修改，不得混入下一版本功能；紧急修复完成后必须将 `main` 中的修复同步回 `develop`。
