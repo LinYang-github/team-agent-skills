@@ -1,0 +1,6 @@
+interface:
+  display_name: "C# 工程编码规范"
+  short_description: "统一 C#/.NET 项目的工程实现与质量实践"
+  default_prompt: "使用 $csharp-coding-standard 设计、实现或审查 C#/.NET 工程。"
+policy:
+  allow_implicit_invocation: true

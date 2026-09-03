@@ -1,0 +1,48 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**]
+
+engine:
+  name: claude_code 
+
+cases:
+  files:
+    - evals/cases/service-lifecycle.yaml
+  defaults:
+    timeout_seconds: 90
+    max_turns: 3
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["asyncio|await"]
+    - output_matches:
+        any: ["create_task|TaskGroup|保存.*Task|Task.*引用|引用|add_done_callback"]
+    - output_matches:
+        any: ["CancelledError|取消|超时|优雅退出|shutdown|SIGTERM|signal"]
+    - output_matches:
+        any: ["time\\.sleep|阻塞.*事件循环|to_thread|run_in_executor"]
+    - output_matches:
+        any: ["except.*Exception|裸.*except|bare except|except:|具体异常"]
+    - output_matches:
+        any: ["maxsize|有界|容量|背压|并发上限|Semaphore|持锁|Lock"]
+    - output_matches:
+        any: ["async with|close\\(\\)|__aexit__|关闭"]
+    - output_matches:
+        all: ["pytest"]
+    - output_matches:
+        any: ["mypy|ruff|类型注解|注解"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]

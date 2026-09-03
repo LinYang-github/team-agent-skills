@@ -1,0 +1,20 @@
+id: service-lifecycle
+title: C# 服务生命周期与容量边界
+description: 验证 C# Skill 能否补齐服务启动、async void、阻塞等待、锁与异常、资源释放、取消与优雅退出、并发上限和验证命令。
+
+input:
+  prompt: |
+    一个 .NET 8 控制台宿主的服务在 Main 中用 TcpListener/HttpListener 同步阻塞启动，端口写死；
+    每来一个连接就 Task.Run(handler) 派生无上限任务，handler 声明为 async void 并用 .Result 等待下游调用；
+    共享字典用 lock(this) 保护，处理逻辑被 catch (Exception) {} 整体吞掉异常；
+    Socket 和 Stream 用完不释放，没有 CancellationToken、超时、优雅退出、竞态测试和分析器配置。
+    请按团队 C# 工程规范给出最小整改方案和验证命令。若工具列表中存在团队 Skill，必须先加载；
+    加载 Skill 是本用例唯一允许的工具调用；若不存在团队 Skill，则直接作答。
+    不要读取或修改工作区，也不要调用其他工具，控制在 500 字以内。
+
+constraints:
+  timeout_seconds: 90
+  max_turns: 3
+
+expect:
+  exit_code: 0
