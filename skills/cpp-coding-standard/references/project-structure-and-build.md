@@ -75,3 +75,7 @@
 3. 自有 target 无编译警告，依赖可从本地缓存或内部来源恢复。
 4. install/export 后消费者可以找到公共头文件和 target。
 5. 修改公共选项、生成输入或依赖版本时能触发正确重建。
+
+## 历史存量兼容
+
+- 历史存量 CMake 中可能使用 include_directories、link_directories 和 add_definitions；迁移期间允许保留，但不得扩展到新 target，并优先按依赖边界逐步改为 target_include_directories、target_link_libraries 和 target_compile_definitions。
