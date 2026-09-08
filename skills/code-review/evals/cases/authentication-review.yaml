@@ -1,0 +1,29 @@
+id: authentication-review
+title: 认证代码证据化审查
+description: 验证审查能否发现认证绕过和敏感日志，并提供位置、影响与修复方向。
+
+input:
+  prompt: |
+    请审查以下变更，只报告可确认的问题：
+
+    auth.py
+    ```python
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    def check_token(token: str, expected: str = "") -> bool:
+        logger.info("auth token=%s", token)
+        return token == expected
+    ```
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。
+    若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。
+    按严重程度输出文件/位置、触发条件、影响和最小修复方向，控制在 400 字以内。
+
+constraints:
+  timeout_seconds: 90
+  max_turns: 3
+
+expect:
+  exit_code: 0

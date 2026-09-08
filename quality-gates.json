@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "protected_branches": [
+    "main",
+    "develop"
+  ],
+  "branch_patterns": [
+    "^(feature|fix|refactor|docs|test|chore)/(?:[A-Za-z][A-Za-z0-9]*-[0-9]+-)?[a-z0-9]+(?:-[a-z0-9]+)*$",
+    "^(release|hotfix)/[A-Za-z0-9][A-Za-z0-9._-]*$"
+  ],
+  "commit_types": [
+    "新增",
+    "修复",
+    "重构",
+    "优化",
+    "文档",
+    "测试",
+    "构建",
+    "工具",
+    "规范",
+    "回滚"
+  ],
+  "commit_subject_max_length": 72,
+  "max_file_size_bytes": 5242880,
+  "forbidden_file_patterns": [
+    ".env",
+    ".env.*",
+    "**/.env",
+    "**/.env.*",
+    "*.pem",
+    "*.key",
+    "*.p12",
+    "*.pfx",
+    "*.jks",
+    "id_rsa",
+    "id_ed25519",
+    "**/id_rsa",
+    "**/id_ed25519"
+  ],
+  "allowed_file_patterns": [
+    ".env.example",
+    ".env.template",
+    ".env.sample",
+    "**/.env.example",
+    "**/.env.template",
+    "**/.env.sample"
+  ],
+  "secret_patterns": [
+    {
+      "name": "private key",
+      "pattern": "-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----"
+    },
+    {
+      "name": "GitHub token",
+      "pattern": "\\bgh[pousr]_[A-Za-z0-9]{30,}\\b"
+    },
+    {
+      "name": "AWS access key",
+      "pattern": "\\bAKIA[0-9A-Z]{16}\\b"
+    }
+  ],
+  "remote_asset_extensions": [
+    ".css",
+    ".html",
+    ".htm",
+    ".jsx",
+    ".scss",
+    ".tsx",
+    ".vue"
+  ],
+  "remote_asset_allowlist": [],
+  "forbidden_content_patterns": [],
+  "blocked_command_patterns": [
+    {
+      "name": "hard reset",
+      "pattern": "(?:^|[;&|]\\s*)git\\s+reset\\s+--hard\\b"
+    },
+    {
+      "name": "forced clean",
+      "pattern": "(?:^|[;&|]\\s*)git\\s+clean\\s+-[^\\s]*[fd][^\\s]*\\b"
+    },
+    {
+      "name": "discard checkout",
+      "pattern": "(?:^|[;&|]\\s*)git\\s+checkout\\s+--\\s+"
+    },
+    {
+      "name": "discard restore",
+      "pattern": "(?:^|[;&|]\\s*)git\\s+restore(?:\\s+--source=HEAD)?\\s+"
+    },
+    {
+      "name": "forced push",
+      "pattern": "(?:^|[;&|]\\s*)git\\s+push\\b[^\\n]*(?:--force(?:-with-lease)?|-f)(?:\\s|$)"
+    },
+    {
+      "name": "recursive forced delete",
+      "pattern": "(?:^|[;&|]\\s*)rm\\s+-[^\\s]*r[^\\s]*f[^\\s]*\\s+|(?:^|[;&|]\\s*)rm\\s+-[^\\s]*f[^\\s]*r[^\\s]*\\s+"
+    }
+  ],
+  "commands": {
+    "pre_commit": [],
+    "pre_push": [
+      "./scripts/validate-skills.sh",
+      "./scripts/run-python.sh -m unittest discover -s tests -p 'test_*.py'"
+    ]
+  }
+}

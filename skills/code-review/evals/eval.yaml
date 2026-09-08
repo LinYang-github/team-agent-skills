@@ -1,0 +1,48 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**]
+  - source: local_path
+    path: ../common-coding-standards
+    include: [SKILL.md, references/**]
+
+engine:
+  name: claude_code
+  model:
+    name: haiku
+
+cases:
+  files:
+    - evals/cases/authentication-review.yaml
+  defaults:
+    timeout_seconds: 90
+    max_turns: 3
+  parallelism: 1
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["auth.py|check_token"]
+    - output_matches:
+        any: ["空.*token|token.*空|默认.*空|empty"]
+    - output_matches:
+        all: ["token", "日志"]
+    - output_matches:
+        any: ["绕过|未认证|认证成功|泄露"]
+    - output_matches:
+        any: ["P0|P1|P2|严重|高风险"]
+    - output_matches:
+        any: ["拒绝空|脱敏|不记录|删除.*日志"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]

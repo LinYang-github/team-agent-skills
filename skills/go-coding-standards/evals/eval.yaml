@@ -1,0 +1,51 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**]
+  - source: local_path
+    path: ../common-coding-standards
+    include: [SKILL.md, references/**]
+
+engine:
+  name: claude_code
+  model:
+    name: haiku
+
+cases:
+  files:
+    - evals/cases/service-lifecycle.yaml
+  defaults:
+    timeout_seconds: 90
+    max_turns: 3
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["signal.NotifyContext|NotifyContext"]
+    - output_matches:
+        all: ["http.Server", "Shutdown"]
+    - output_matches:
+        any: ["ReadHeaderTimeout|ReadTimeout|WriteTimeout|IdleTimeout"]
+    - output_matches:
+        any: ["context|取消"]
+    - output_matches:
+        any: ["有界|容量|背压|并发上限"]
+    - output_matches:
+        any: ["命令行|flag|--port"]
+    - output_matches:
+        all: ["go test", "-race"]
+    - output_matches:
+        any: ["go vet|gofmt"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]

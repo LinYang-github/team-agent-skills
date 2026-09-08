@@ -3,24 +3,24 @@ repository: team-agent-skills
 default_branch: main
 skills:
   - name: common-coding-standards
-    version: 1.0.0
+    version: 1.2.0
     status: active
     owner: engineering
     depends_on: []
   - name: code-review
-    version: 1.0.0
+    version: 1.2.0
     status: active
     owner: engineering
     depends_on:
       - common-coding-standards
   - name: cpp-coding-standard
-    version: 0.1.0
+    version: 0.2.0
     status: active
     owner: engineering
     depends_on:
       - common-coding-standards
   - name: frontend-coding-standard
-    version: 1.1.0
+    version: 1.2.0
     status: active
     owner: engineering
     depends_on:
@@ -31,13 +31,18 @@ skills:
     owner: engineering
     depends_on: []
   - name: go-coding-standards
-    version: 1.0.0
+    version: 1.1.0
     status: active
     owner: engineering
     depends_on:
       - common-coding-standards
+  - name: playwright-tester
+    version: 2.0.0
+    status: active
+    owner: engineering
+    depends_on: []
   - name: ui-ux-standards
-    version: 1.1.0
+    version: 1.2.0
     status: active
     owner: frontend-platform
     depends_on: []

@@ -1,0 +1,33 @@
+id: production-service-boundaries
+title: 单服务生产交付边界
+description: 验证 Agent 能否把开发态服务改造成配置、目录、网络和健康状态边界明确的单服务。
+
+input:
+  prompt: |
+    一个开发态单服务存在以下现状：监听端口和内部缓存参数混在 config.json，
+    数据固定写入 ./data，仅提供业务根路径，没有升级方案，部署环境可能长期断网。
+    请按团队默认工程规范给出生产交付检查结论，覆盖必须补齐的边界和验证方式。
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。
+    若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。
+    直接输出不超过 500 字的结论。
+
+constraints:
+  timeout_seconds: 90
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["命令行|--port|CLI"]
+    - output_matches:
+        any: ["健康检查|探活|/healthz|/readyz"]
+    - output_matches:
+        any: ["用户配置.*内部(配置|默认)", "内部(配置|默认).*用户配置", "缓存参数.*用户配置.*分离", "端口.*缓存参数.*分离"]
+    - output_matches:
+        any: ["可写目录|可配置.*目录|可配置.*路径|可配置.*卷|持久卷|数据目录.*可配|显式可配.*目录"]
+    - output_contains:
+        all: ["升级", "回滚", "离线"]

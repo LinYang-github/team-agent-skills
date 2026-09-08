@@ -1,0 +1,6 @@
+interface:
+  display_name: "Python 工程编码规范"
+  short_description: "统一 Python 项目的工程实现与质量实践"
+  default_prompt: "使用 $python-coding-standard 设计、实现或审查 Python 工程。"
+policy:
+  allow_implicit_invocation: true

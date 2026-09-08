@@ -1,0 +1,50 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**]
+
+engine:
+  name: claude_code
+  model:
+    name: haiku
+
+cases:
+  files:
+    - evals/cases/military-workbench.yaml
+  defaults:
+    timeout_seconds: 90
+    max_turns: 3
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["工作台|任务优先"]
+    - output_matches:
+        any: ["渐变|装饰|营销"]
+    - output_matches:
+        any: ["信息层级|稳定层级|层级清晰|扫描|密度"]
+    - output_matches:
+        any: ["令牌|Design Token|token"]
+    - output_matches:
+        all: ["浅色", "深色"]
+    - output_matches:
+        any: ["悬停|聚焦|禁用|加载"]
+    - output_matches:
+        any: ["长文本|窄窗口|缩放"]
+    - output_matches:
+        any: ["不修改.*(字段|接口|流程|权限|业务)", "未改.*(字段|接口|流程|权限|业务)", "(字段|接口|流程|权限).*零改动", "仅.*视觉.*交互", "业务规则"]
+    - output_matches:
+        any: ["在线资源|CDN|本地资源"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]

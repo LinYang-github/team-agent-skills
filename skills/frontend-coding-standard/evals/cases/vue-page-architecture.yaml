@@ -1,0 +1,19 @@
+id: vue-page-architecture
+title: Vue 页面工程边界
+description: 验证前端 Skill 能否把页面内接口、状态、反馈和测试责任放回正确边界。
+
+input:
+  prompt: |
+    一个 Vue 3 页面目前使用 Options API 和 JavaScript，在组件 mounted 中直接调用 axios，
+    用 any 保存响应，把跨页筛选条件放在 window 全局变量中，失败时调用 window.alert，
+    没有 Mock、类型检查和测试。项目需要渐进整改，不能整体重写。
+    请按团队前端工程规范给出实施顺序和验收项。若工具列表中存在团队 Skill，必须先加载；
+    加载 Skill 是本用例唯一允许的工具调用；若不存在团队 Skill，则直接作答。
+    不要读取或修改工作区，也不要调用其他工具，控制在 500 字以内。
+
+constraints:
+  timeout_seconds: 90
+  max_turns: 3
+
+expect:
+  exit_code: 0
