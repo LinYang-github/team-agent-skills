@@ -1,0 +1,4 @@
+interface:
+  display_name: "Java Coding Standard"
+  short_description: "统一 Java 项目的语言与工程实践"
+  default_prompt: "使用 $java-coding-standard 设计、实现或审查当前 Java 项目。"

@@ -1,0 +1,38 @@
+id: nullable-contract-review
+title: 审查必须尊重已有可空返回契约
+description: |
+  验证 Agent 不把已被文档、注解和调用方共同约束的 null 返回一概改成异常。
+input:
+  prompt: |
+    这是非交互评测：不要提问或等待确认。只审查下面的代码，不读取项目仓库、不运行命令。
+
+    请只报告需要修改的问题，并回答：是否需要把 findByExternalId 改成抛异常？
+
+    ```java
+    interface UserRepository {
+        /** Returns null when no user has this external id. */
+        @Nullable
+        User findByExternalId(String externalId);
+    }
+
+    final class UserController {
+        private final UserRepository repository;
+
+        UserResponse get(String externalId) {
+            User user = repository.findByExternalId(externalId);
+            if (user == null) {
+                throw new NotFoundException(externalId);
+            }
+            return UserResponse.from(user);
+        }
+    }
+    ```
+expect:
+  must_contain: ["findByExternalId"]
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["保持", "不需要", "不应"]
+    - output_contains:
+        not: ["必须改为抛出异常"]

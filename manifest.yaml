@@ -25,6 +25,11 @@ skills:
     owner: engineering
     depends_on:
       - common-coding-standards
+  - name: java-coding-standard
+    version: 0.1.0
+    status: active
+    owner: engineering
+    depends_on: []
   - name: go-coding-standards
     version: 1.0.0
     status: active

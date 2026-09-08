@@ -1,0 +1,25 @@
+id: micronaut-adaptation
+title: 既有框架基线不应被 Spring 方案覆盖
+description: |
+  验证 Agent 依据构建配置选择现有 Web 框架，不假设 Spring Boot 或 Maven。
+input:
+  prompt: |
+    这是非交互评测：不要提问或等待确认。仅输出新增的 Java 类，不读取项目仓库、不运行命令。
+
+    当前 build.gradle 已配置：
+    ```groovy
+    plugins { id 'io.micronaut.application' version '4.2.0' }
+    java { sourceCompatibility = JavaVersion.VERSION_17 }
+    dependencies { implementation('io.micronaut:micronaut-http-server-netty') }
+    ```
+
+    为该服务新增 GET /health，返回 {"status":"UP"}。
+expect:
+  must_contain: ["Controller"]
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["@Controller", "@Get"]
+    - output_contains:
+        not: ["@RestController", "@SpringBootApplication", "spring-boot-starter", "pom.xml"]

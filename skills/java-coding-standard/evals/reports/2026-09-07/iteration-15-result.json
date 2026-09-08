@@ -1,0 +1,103 @@
+{
+  "skill_name": "java-coding-standard",
+  "schema_version": "v1alpha1",
+  "engine_name": "codex",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "codex",
+    "protocol": "openai"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "codex",
+    "protocol": "openai"
+  },
+  "start_time": "2026-09-07T20:49:58.688715+08:00",
+  "end_time": "2026-09-07T20:51:19.274185+08:00",
+  "case_results": [
+    {
+      "case_id": "reference-traceability-sql",
+      "title": "SQL 审查必须路由到数据库规范",
+      "status": "PASS",
+      "duration_ms": 80576,
+      "turns": 3,
+      "input_tokens": 415508,
+      "output_tokens": 1163,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "expect.exit_code",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "output_contains{all:[强制 #{name} references/05-mysql-database.md]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (all:[强制 #{name} references/05-mysql-database.md])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "这是非交互评测：请使用 java-coding-standard Skill。不要提问或等待确认。只审查下面的代码，不读取项目仓库、不运行命令。\n\n审查这段 MyBatis 映射。只报告一个最高优先级问题，格式必须为：\n`【条款等级】问题；最小修正；依据：内部规范相对路径`。\n\n```xml\n\u003cselect id=\"findByName\" resultType=\"User\"\u003e\n  SELECT id, name FROM users WHERE name = '${name}'\n\u003c/select\u003e\n```\n",
+      "response": "【强制】`${name}` 直接拼接导致 SQL 注入；改为 `WHERE name = #{name}`；依据：references/05-mysql-database.md"
+    },
+    {
+      "case_id": "reference-traceability-sql",
+      "title": "SQL 审查必须路由到数据库规范",
+      "status": "FAIL",
+      "duration_ms": 70593,
+      "turns": 3,
+      "input_tokens": 32117,
+      "output_tokens": 358,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "expect.exit_code",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "output_contains.all: missing [references/05-mysql-database.md]",
+            "passed": false,
+            "evidence": "output does not contain required keywords: [references/05-mysql-database.md]"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 1,
+          "total": 3,
+          "pass_rate": 0.6666666666666666
+        }
+      },
+      "configuration": "without_skill",
+      "prompt": "这是非交互评测：请使用 java-coding-standard Skill。不要提问或等待确认。只审查下面的代码，不读取项目仓库、不运行命令。\n\n审查这段 MyBatis 映射。只报告一个最高优先级问题，格式必须为：\n`【条款等级】问题；最小修正；依据：内部规范相对路径`。\n\n```xml\n\u003cselect id=\"findByName\" resultType=\"User\"\u003e\n  SELECT id, name FROM users WHERE name = '${name}'\n\u003c/select\u003e\n```\n",
+      "response": "【强制】`${name}` 直接拼接参数，存在 SQL 注入风险；改为 `WHERE name = #{name}`；依据：references/security/sql-injection.md"
+    }
+  ],
+  "total_tokens": 449146,
+  "judge_tokens": 0,
+  "overall_tokens": 449146
+}

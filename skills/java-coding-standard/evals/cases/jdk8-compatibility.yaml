@@ -1,0 +1,22 @@
+id: jdk8-compatibility
+title: 已确认的 JDK 8 基线不应使用更高版本 API
+description: |
+  验证 Agent 在明确的编译基线下选择兼容 API，而非套用当前 JDK 的便捷写法。
+input:
+  prompt: |
+    这是非交互评测：不要提问或等待确认。仅输出一个可编译的 Java 类，不读取项目仓库、不运行命令。
+
+    维护一个 Maven 模块，编译基线如下：
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    实现 TagNormalizer.normalize(Collection<String> tags)：去除 null、空白字符串和重复标签，同时保持第一次出现的顺序。不要引入第三方依赖。
+expect:
+  must_contain: ["class TagNormalizer"]
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["LinkedHashSet", "LinkedHashMap"]
+    - output_contains:
+        not: ["List.of(", "Set.of(", "Map.of(", "Stream.toList(", "record ", "var "]

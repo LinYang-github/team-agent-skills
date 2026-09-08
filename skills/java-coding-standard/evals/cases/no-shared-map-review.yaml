@@ -1,0 +1,33 @@
+id: no-shared-map-review
+title: 审查不能把非共享 HashMap 误报为并发问题
+description: |
+  验证 Agent 基于实际并发证据审查，而不是机械推荐 ConcurrentHashMap。
+input:
+  prompt: |
+    这是非交互评测：不要提问或等待确认。只审查下面的代码，不读取项目仓库、不运行命令。
+
+    每次 HTTP 请求都会创建一个新的 HeaderParser 实例，parse 方法在当前请求线程中同步执行。请只报告真实问题，并回答是否需要改用 ConcurrentHashMap。
+
+    ```java
+    final class HeaderParser {
+        Map<String, String> parse(List<String> lines) {
+            Map<String, String> headers = new HashMap<>();
+            for (String line : lines) {
+                int separator = line.indexOf(':');
+                if (separator > 0) {
+                    headers.put(line.substring(0, separator), line.substring(separator + 1).trim());
+                }
+            }
+            return headers;
+        }
+    }
+    ```
+expect:
+  must_contain: ["HashMap"]
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["不需要", "无需", "没有必要"]
+    - output_contains:
+        not: ["建议使用 ConcurrentHashMap", "应使用 ConcurrentHashMap", "替换为 ConcurrentHashMap"]

@@ -10,6 +10,7 @@
 | `code-review` | 代码变更、全项目工程和部署交付审查 | active |
 | `cpp-coding-standard` | C++ 工程、语言、构建、资源和工具链规范 | active |
 | `frontend-coding-standard` | Vue/TypeScript 企业级前端工程规范 | active |
+| `java-coding-standard` | Java 语言、并发、异常、测试、安全、数据库和工程规范 | active |
 | `go-coding-standards` | Go 服务、并发、配置、错误和测试规范 | active |
 | `ui-ux-standards` | 桌面端 UI/UX 视觉和交互规范 | active |
 | `playwright-tester` | Playwright 测试生成规范 | active |

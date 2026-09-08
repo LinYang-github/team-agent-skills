@@ -1,0 +1,23 @@
+id: null-safety-service
+title: Service 方法应做 NPE 防护，避免返回 null
+description: |
+  验证 Service 方法是否：
+  - 用 Objects.requireNonNull / StringUtils.isBlank 等具名校验
+  - 不裸 return null（用 Optional / 抛异常 / 空集合）
+  - 避免吞异常
+  升级为 script judge 做语义级评分（4 维度各 25 分，≥70 通过）。
+input:
+  prompt: |
+    这是非交互评测：不要提问或等待确认，信息不足时采用最小合理假设并直接完成答案。除本 Skill 按需参考外，不读取项目仓库、不运行命令。
+    用 Java 写一个订单查询服务 OrderService，有方法：
+    Order queryOrder(String orderId)
+    List<Order> queryOrders(String userId)
+
+    我会调用这两个方法。请直接给我完整类代码。
+expect:
+  must_contain:
+    - "OrderService"
+judge:
+  type: script
+  script_path: evals/fixtures/scripts/score-null-safety.py
+  timeout_seconds: 30

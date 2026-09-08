@@ -1,0 +1,23 @@
+id: reference-traceability-sql
+title: SQL 审查必须路由到数据库规范
+description: |
+  验证 Agent 能为 MyBatis 注入风险给出 Skill 内的精确规范来源。
+input:
+  prompt: |
+    这是非交互评测：请使用 java-coding-standard Skill。不要提问或等待确认。只审查下面的代码，不读取项目仓库、不运行命令。
+
+    审查这段 MyBatis 映射。只报告一个最高优先级问题，格式必须为：
+    `【条款等级】问题；最小修正；依据：内部规范相对路径`。
+
+    ```xml
+    <select id="findByName" resultType="User">
+      SELECT id, name FROM users WHERE name = '${name}'
+    </select>
+    ```
+expect:
+  must_contain: ["${name}"]
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["强制", "#{name}", "references/05-mysql-database.md"]

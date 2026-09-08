@@ -1,0 +1,23 @@
+id: dynamic-order-by
+title: 动态排序字段必须白名单化，查询值必须参数化
+description: |
+  验证 Agent 区分 SQL 参数化与不能参数化的标识符，并对白名单外输入安全降级。
+input:
+  prompt: |
+    这是非交互评测：不要提问或等待确认。仅输出 Java 代码，不读取项目仓库、不运行命令。
+
+    用 JDBC 实现 UserRepository.findPage(String keyword, String sortBy, String direction)。
+    users 表字段为 id、name、created_at；调用方传入的 sortBy 只允许 name 或 createdAt，direction 只允许 asc 或 desc。方法按名称包含关系查询并排序，返回 List<User>。不使用框架。
+expect:
+  must_contain: ["findPage", "PreparedStatement"]
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["switch", "Map<String, String>", "Map.of", "equalsIgnoreCase", ".equals(sortBy)"]
+    - output_contains:
+        all: ["setString", "ORDER BY"]
+    - output_contains:
+        not: ["${sortBy}", "${direction}"]
+    - output_matches:
+        not: ["(?s)ORDER BY[^;]{0,200}\\+\\s*sortBy\\b", "(?s)ORDER BY[^;]{0,200}\\+\\s*direction\\b"]
