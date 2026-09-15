@@ -1,0 +1,16 @@
+id: cross-domain-boundary
+title: 多领域系统的所有权和组合边界
+description: 验证技能能否区分领域单任务流程与宿主多任务编排，并选择稳定契约而非共享数据库。
+
+input:
+  prompt: |
+    团队有规划、方案设计和结果评估三个独立产品。规划产品的一个工作步骤会使用一个或多个方案设计，并在后续关联若干评估结果。请给出领域能力包改造边界和集成方案，说明任务和资源关系由谁管理，以及 Skill、MCP、API、SDK 和页面分别承担什么职责。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 800 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
