@@ -1,0 +1,34 @@
+id: mcp-app-degradation
+title: MCP App 初始化竞态与非阻断降级
+description: 验证技能能否保留宿主初始结果，防止兜底和刷新的旧请求覆盖内容。
+
+input:
+  prompt: |
+    请使用 $domain-package-transformation 完成下列架构判断。
+
+    一个 MCP App 初次可以显示宿主传入的 toolresult，但 `connect()` 完成后会立即发起一次兜底工具调用。如果该调用失败，页面会清空原有内容并显示“MCP 服务不可用”；用户快速刷新时还可能被旧请求覆盖。请给出生命周期、并发协调、错误分类、降级交互和测试方案。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 900 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["connect.*前.*后|connect.*后.*前|初始.*toolresult|宿主.*toolResult"]
+    - output_matches:
+        any: ["有界|合理窗口|最多.*一次"]
+    - output_matches:
+        any: ["序号|代次|取消|最新.*意图|epoch|AbortController|last-write"]
+    - output_matches:
+        any: ["保留.*内容|保留.*数据|非阻断|最后.*成功|不清屏"]
+    - output_matches:
+        any: ["MCP.*API|API.*MCP|业务错误|schema"]
+    - output_matches:
+        any: ["无限.*重试|sleep|全页错误"]

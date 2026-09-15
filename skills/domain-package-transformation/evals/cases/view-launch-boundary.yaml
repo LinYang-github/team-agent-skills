@@ -1,0 +1,40 @@
+id: view-launch-boundary
+title: 宿主与领域页面启动边界
+description: 验证技能能否把稳定视图/资源引用与随机端口、内部路由和宿主壳分离。
+
+input:
+  prompt: |
+    请使用 $domain-package-transformation 完成下列架构判断。
+
+    通用任务宿主需要打开多个领域包的单任务工作台。各领域内部路由不同，本地实例每次启动端口也不同。团队打算让宿主保存带端口的完整 URL 模板并自行替换资源 ID，嵌入后继续显示领域产品的全局导航。请设计视图注册、启动解析、standalone/hosted 壳层、返回上下文和验收方案。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 900 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["viewId|视图.*ID|视图引用"]
+    - output_matches:
+        any: ["资源引用|resourceRef|resourceId|稳定.*ID"]
+    - output_matches:
+        any: ["禁止.*routeTemplate|不.*routeTemplate|不落.*route|宿主.*不.*拼.*路由|宿主.*不.*替换|否决.*URL.*模板"]
+    - output_matches:
+        any: ["解析|resolver|launch"]
+    - output_matches:
+        any: ["standalone.*hosted|hosted.*standalone"]
+    - output_matches:
+        any: ["不持久化.*URL|不.*保存.*URL|随机端口"]
+    - output_matches:
+        any: ["不透明|开放跳转|returnUrl"]
+    - output_matches:
+        any: ["hosted.*隐藏.*全局|hosted.*不.*全局|standalone.*完整.*壳|避免.*双重导航"]
+    - output_matches:
+        any: ["返回.*桥接|不透明.*不.*返回|不.*token.*返回|宿主.*返回能力"]

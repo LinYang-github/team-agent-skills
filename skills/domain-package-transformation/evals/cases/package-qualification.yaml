@@ -1,0 +1,30 @@
+id: package-qualification
+title: 领域包适用性判断
+description: 验证技能不会把普通算法库机械改造成包含全部渠道的领域包。
+
+input:
+  prompt: |
+    当前仓库只有一组无状态数值算法，被一个后端进程调用，没有独立数据库、业务状态、页面、Agent 用户或外部系统消费者。团队提出为它补齐 Skill、CLI、MCP、SDK、Web 和独立服务，包装成领域能力包。请客观评估是否值得这样改造，并给出最小合理目标形态和未来升级条件。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 600 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["不建议|不适合|不值得"]
+    - output_matches:
+        any: ["库|模块|纯函数"]
+    - output_matches:
+        any: ["消费者|复用者|调用方"]
+    - output_matches:
+        any: ["未来.*条件|升级.*条件|触发条件|重新评估"]
+    - output_matches:
+        any: ["占位|必选套餐|按需|逐个|每次.*只加|六面.*危害"]

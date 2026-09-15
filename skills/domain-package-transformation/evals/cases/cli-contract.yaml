@@ -1,0 +1,34 @@
+id: cli-contract
+title: 领域包 CLI 命名和命令契约
+description: 验证技能能否区分业务、运行、工作区和客户端集成命令，并设计机器可依赖的输出与错误语义。
+
+input:
+  prompt: |
+    一个产品计划同时提供领域资源操作、本地服务启停、项目初始化、Agent 客户端安装和 MCP stdio 服务。团队暂定创建 product-cli、product-server、product-mcp 三个用户命令，所有动作都放在根级 install/update/status 下，JSON 输出会混入日志，失败统一返回 1。请使用领域能力包方法重新设计命令行名称、命令树、全局参数、输出、退出码、确认及兼容策略。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 1000 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["productctl|<product>ctl|单一.*主命令|一个.*主命令"]
+    - output_matches:
+        any: ["workspace.*init|工作区.*初始化"]
+    - output_matches:
+        any: ["integration.*install|客户端.*集成"]
+    - output_matches:
+        any: ["mcp.*serve|MCP.*serve"]
+    - output_matches:
+        any: ["stdout.*stderr|stderr.*stdout"]
+    - output_matches:
+        any: ["退出码|exit code"]
+    - output_matches:
+        any: ["expected-version|幂等|dry-run"]

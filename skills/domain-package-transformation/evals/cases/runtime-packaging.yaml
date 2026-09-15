@@ -1,0 +1,16 @@
+id: runtime-packaging
+title: 领域包运行和发行设计
+description: 验证技能能否区分安装包、命令、进程、页面资产和业务数据，并提出安装态验证。
+
+input:
+  prompt: |
+    一个已有业务系统包含 Python 后端、Web、算法库、CLI 和 MCP Server。开发环境可以运行，但离开源码仓库后 CLI 找不到 Web 与 MCP 资产，不同业务项目还共享固定端口和同一数据库。请评估它距离可交付领域能力包还缺什么，并提出分阶段改造和验收方案。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 800 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0

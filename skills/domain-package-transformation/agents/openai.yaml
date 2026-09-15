@@ -1,0 +1,6 @@
+interface:
+  display_name: "领域能力包改造"
+  short_description: "将已有业务产品改造成可注册、可组合和可独立运行的领域能力包"
+  default_prompt: "使用 $domain-package-transformation 评估当前产品，并制定可验证的领域能力包改造方案。"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,46 @@
+schema_version: v1alpha1
+
+environment:
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+    include: [SKILL.md, references/**]
+
+engine:
+  name: claude_code
+  model:
+    name: haiku
+
+cases:
+  files:
+    - evals/cases/package-qualification.yaml
+    - evals/cases/cli-contract.yaml
+    - evals/cases/cross-domain-boundary.yaml
+    - evals/cases/runtime-packaging.yaml
+    - evals/cases/view-launch-boundary.yaml
+    - evals/cases/mcp-app-degradation.yaml
+  defaults:
+    timeout_seconds: 120
+    max_turns: 3
+  parallelism: 1
+
+benchmark:
+  enabled: false
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["适合|不适合|条件"]
+    - output_matches:
+        any: ["领域边界|业务边界|所有权|限界上下文"]
+    - output_matches:
+        any: ["能力|契约"]
+    - output_matches:
+        any: ["验证|验收|测试"]
+
+report:
+  formats: [json, html]
+  artifacts: [transcript]

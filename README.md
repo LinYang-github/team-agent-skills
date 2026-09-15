@@ -8,12 +8,15 @@
 | --- | --- | --- |
 | `common-coding-standards` | 跨语言通用编码、文档、Git、测试和交付规范 | active |
 | `code-review` | 代码变更、全项目工程和部署交付审查 | active |
+| `domain-package-transformation` | 将业务产品改造成可注册、可组合和可独立运行的领域能力包 | active |
 | `cpp-coding-standard` | C++ 工程、语言、构建、资源和工具链规范 | active |
+| `csharp-coding-standard` | C#/.NET 工程、语言、构建、资源和工具链规范 | active |
 | `frontend-coding-standard` | Vue/TypeScript 企业级前端工程规范 | active |
 | `java-coding-standard` | Java 语言、并发、异常、测试、安全、数据库和工程规范 | active |
 | `go-coding-standards` | Go 服务、并发、配置、错误和测试规范 | active |
 | `ui-ux-standards` | 桌面端 UI/UX 视觉和交互规范 | active |
 | `playwright-tester` | Playwright 测试生成规范 | active |
+| `python-coding-standard` | Python 工程、语言、构建、资源和工具链规范 | active |
 
 开源或外部来源的 Skill 不纳入本仓库的内部版本治理。
 
