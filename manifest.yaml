@@ -25,6 +25,12 @@ skills:
     owner: engineering
     depends_on:
       - common-coding-standards
+  - name: csharp-coding-standard
+    version: 0.1.0
+    status: active
+    owner: engineering
+    depends_on:
+      - common-coding-standards
   - name: frontend-coding-standard
     version: 1.2.0
     status: active
@@ -47,6 +53,12 @@ skills:
     status: active
     owner: engineering
     depends_on: []
+  - name: python-coding-standard
+    version: 0.1.0
+    status: active
+    owner: engineering
+    depends_on:
+      - common-coding-standards
   - name: ui-ux-standards
     version: 1.2.0
     status: active
