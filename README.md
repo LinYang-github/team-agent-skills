@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | `common-coding-standards` | 跨语言通用编码、文档、Git、测试和交付规范 | active |
 | `code-review` | 代码变更、全项目工程和部署交付审查 | active |
+| `plugin-packager` | 将已有产品能力打包为 HuiMate 可导入的插件目录与 ZIP；[维护与验证](docs/plugin-packager.md) | active |
 | `domain-package-transformation` | 将业务产品改造成可注册、可组合和可独立运行的领域能力包 | active |
 | `cpp-coding-standard` | C++ 工程、语言、构建、资源和工具链规范 | active |
 | `csharp-coding-standard` | C#/.NET 工程、语言、构建、资源和工具链规范 | active |
