@@ -86,7 +86,7 @@ description: 统一跨语言、跨框架项目的通用编码实践，包括命�
 
 - 命名、可读性、函数职责和复杂度：阅读 references/naming-and-readability.md。
 - 注释、公共 API 和技术文档：阅读 references/comments-and-documentation.md。
-- README、项目文档分类、目录、元数据、生命周期和文档质量门禁：阅读 references/documentation-governance.md。
+- README、项目文档分类、目录、元数据、生命周期、可编辑文档制品和文档质量门禁：阅读 references/documentation-governance.md。
 - 异常、错误分类、重试、降级和恢复：阅读 references/errors-and-exceptions.md。
 - 日志级别、结构化字段、关联 ID、脱敏、轮转和保留：阅读 references/logging-and-observability.md。
 - 输入校验、DTO、空值、配置和数据转换：阅读 references/input-and-data-boundaries.md。

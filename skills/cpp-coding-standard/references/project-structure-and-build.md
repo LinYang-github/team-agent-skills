@@ -79,3 +79,6 @@
 ## 历史存量兼容
 
 - 历史存量 CMake 中可能使用 include_directories、link_directories 和 add_definitions；迁移期间允许保留，但不得扩展到新 target，并优先按依赖边界逐步改为 target_include_directories、target_link_libraries 和 target_compile_definitions。
+- 存量 SDK 的头文件目录、库目录、预处理宏、字符集选项、警告豁免、语言标准和运行库选项集中在 imported target 或专用适配 target，不得作为全局选项污染新业务 target。
+- SDK 只支持较低语言标准或旧工具链时，兼容要求只施加到直接接触 SDK 的目标；核心业务和算法目标保持项目默认基线，通过窄接口连接。
+- SDK 安装位置、工具链根目录和架构库路径通过 preset、toolchain、缓存变量或受控环境输入，不硬编码个人路径，也不要求修改用户 shell 启动文件。
