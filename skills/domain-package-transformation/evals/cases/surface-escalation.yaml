@@ -1,0 +1,36 @@
+id: surface-escalation
+title: 按意图选择对话、卡片与完整页面
+description: 验证技能不会因为领域包注册了 MCP App，就为普通首轮澄清或明确打开页面生成冗余卡片。
+
+input:
+  prompt: |
+    请使用 $domain-package-transformation 完成下列架构判断。
+
+    一个领域包同时提供 Skill、数据工具、render 工具、无界面的视图解析工具和完整 Web。用户只说了一句模糊目标时，Agent 既在正文询问两个问题，又自动渲染一张内容相同的大型澄清卡片；用户明确说“打开完整任务页面”时，Agent 又先渲染概览卡片再打开页面。请定义自然语言、卡片/侧边栏和完整页面的触发边界，并给出防回归验证方案。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 700 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["对话.*卡片.*完整页面|自然语言.*卡片.*页面|按.*意图.*选择|不是.*必须.*依次"]
+    - output_matches:
+        any: ["首轮.*不.*render|普通.*澄清.*不.*卡片|模糊目标.*自然语言|少量.*追问.*对话"]
+    - output_matches:
+        any: ["明确要求.*可视化|权威事实|互斥选择|跨字段冲突|结构化差异|确认"]
+    - output_matches:
+        any: ["连续编辑|多字段|表格|图表|完整流程"]
+    - output_matches:
+        any: ["明确.*打开.*直接|绕过.*卡片|不.*render.*打开|无界面.*解析"]
+    - output_matches:
+        any: ["Skill.*工具描述.*评测|工具描述.*评测|真实.*Agent.*回归|render.*断言"]
+    - output_matches:
+        any: ["重复|冗余"]
