@@ -1,0 +1,36 @@
+id: workflow-composition
+title: 强类型流程端口与外部输入
+description: 验证技能能否把控制顺序、数据绑定、外部槽位和受控适配器分开，并保留发布依赖证据。
+
+input:
+  prompt: |
+    请使用 $domain-package-transformation 审查一个多节点领域流程。当前模板只用 dependsOn 表示先后顺序，页面按节点顺序猜测数据来源；外部评估系统被建成了本领域的空实现节点；调用方还能在草案里提交任意 JavaScript 作为字段转换。preview 只保存任务版本，不记录输入修订和内容哈希。请给出目标流程契约、编译/预览/应用规则、失效传播和自动化验收方案。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 1000 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["controlDependencies.*dataBindings|控制.*依赖.*数据.*绑定|顺序.*数据连接"]
+    - output_matches:
+        any: ["inputPorts|outputPorts|输入端口|输出端口"]
+    - output_matches:
+        any: ["externalSlots|external-resource|外部槽位"]
+    - output_matches:
+        any: ["禁止.*脚本|不得.*脚本|注册.*适配器|受控.*适配器"]
+    - output_matches:
+        any: ["planHash|计划哈希"]
+    - output_matches:
+        any: ["ResolvedInputRef|修订.*哈希|输入引用"]
+    - output_matches:
+        any: ["preview.*失效|预览.*失效|重新校验"]
+    - output_matches:
+        any: ["快照|发布.*证据|回读"]

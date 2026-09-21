@@ -14,7 +14,7 @@ skills:
     depends_on:
       - common-coding-standards
   - name: domain-package-transformation
-    version: 0.2.0
+    version: 0.3.0
     status: active
     owner: engineering
     depends_on:

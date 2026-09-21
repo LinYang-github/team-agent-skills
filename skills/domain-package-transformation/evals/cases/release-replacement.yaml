@@ -1,0 +1,34 @@
+id: release-replacement
+title: 安装态语义和发行替换验收
+description: 验证技能能否保持源码态与安装态语义一致，并设计可复现发行及卸载重装恢复测试。
+
+input:
+  prompt: |
+    请使用 $domain-package-transformation 审查一个领域包发行方案。构建脚本会在安装态清单中顺便删除部分能力，wheel 只检查能否安装，没有发行文件索引；团队用两份 wheel 原始字节是否相同判断可复现。候选环境仍继承源码 PYTHONPATH，卸载测试会删除业务数据库，也没有验证客户端集成重复安装或 MCP 真实调用。请给出构建约束、发行完整性和安装替换验收方案。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 1000 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["源码态.*安装态.*语义|语义投影|只能.*路径"]
+    - output_matches:
+        any: ["白名单|发行索引|release index|SHA-256|摘要"]
+    - output_matches:
+        any: ["规范化.*语义|不能.*原始字节|不.*比较.*字节"]
+    - output_matches:
+        any: ["PYTHONPATH|用户.*site-packages|干净.*环境"]
+    - output_matches:
+        any: ["MCP.*initialize|真实.*只读|tools/list|工具发现"]
+    - output_matches:
+        any: ["重复安装.*幂等|dry-run|状态检查"]
+    - output_matches:
+        any: ["卸载.*保留.*数据|重新安装.*回读|重装.*恢复"]
