@@ -39,6 +39,50 @@ class PluginPackagerTests(unittest.TestCase):
         self.assertEqual(result.stderr, "")
         return result.returncode, json.loads(result.stdout)
 
+    def workbench(self, **changes):
+        entry = {"id": "product.catalog", "title": "Product catalog", "launch": {"kind": "http", "url": "https://example.invalid/resolve", "arguments": {}}, "page": {"path": "/catalog/", "origins": ["https://example.invalid"]}}
+        entry.update(changes)
+        self.put(".workbenches.json", json.dumps({"version": 1, "workbenches": [entry]}))
+
+    def test_workbench_only_package_and_zip(self):
+        shutil.rmtree(self.product / "skills")
+        self.workbench()
+        code, report = self.run_packager()
+        self.assertEqual(code, 0, report)
+        self.assertEqual(report["capabilities"]["workbenches"], ["product.catalog"])
+        with zipfile.ZipFile(self.output) as archive:
+            self.assertIn(".workbenches.json", archive.namelist())
+
+    def test_workbench_mcp_binds_only_owned_service(self):
+        launch = {"kind": "mcp", "server": "api", "tool": "resolve_view", "arguments": {}}
+        self.workbench(launch=launch, page={"path": "/catalog/", "loopback": True})
+        self.assertNotEqual(self.run_packager("validate")[0], 0)
+        self.put(".mcp.json", json.dumps({"mcpServers": {"api": {"command": "service"}}}))
+        code, report = self.run_packager("validate")
+        self.assertEqual(code, 0, report)
+
+    def test_workbench_rejects_unsafe_policy_and_duplicate_ids(self):
+        for page in ({"path": "/catalog/", "origins": ["HTTPS://example.com"]}, {"path": "/catalog/", "origins": ["http://127.1"]}, {"path": "/catalog/", "origins": ["https://example.com:0444"]}, {"path": "/catalog/", "origins": ["https://example.com:443"]}, {"path": "/catalog/", "loopback": True, "origins": None}, {"path": "//foreign.invalid", "loopback": True}, {"path": "/catalog/"}, {"path": "/catalog/", "origins": ["https://example.invalid/path"]}, {"path": "/../secret", "loopback": True}):
+            with self.subTest(page=page):
+                self.workbench(page=page)
+                self.assertNotEqual(self.run_packager("validate")[0], 0)
+        self.workbench()
+        data=json.loads((self.product / ".workbenches.json").read_text())
+        data["workbenches"] *= 2
+        self.put(".workbenches.json", json.dumps(data))
+        self.assertNotEqual(self.run_packager("validate")[0], 0)
+
+    def test_workbench_cannot_expose_secret_or_undeclared_parameter(self):
+        self.workbench(launch={"kind": "http", "url": "${user_config.secret}", "arguments": {}})
+        self.assertNotEqual(self.run_packager("validate")[0], 0)
+        manifest=json.loads((self.product / ".claude-plugin/plugin.json").read_text())
+        manifest["userConfig"]={"secret":{"type":"string","title":"Secret","description":"Private input","sensitive":True}}
+        self.put(".claude-plugin/plugin.json",json.dumps(manifest))
+        self.assertNotEqual(self.run_packager("validate")[0], 0)
+        manifest["userConfig"]["secret"]["sensitive"]=False
+        self.put(".claude-plugin/plugin.json",json.dumps(manifest))
+        self.assertEqual(self.run_packager("validate")[0], 0)
+
     def test_portable_package_preserves_resources_and_checksum(self) -> None:
         self.put("skills/guide/.keep", "hidden resource")
         code, report = self.run_packager()

@@ -1,6 +1,6 @@
 ---
 name: plugin-packager
-description: Assemble the skills, MCP services, MCP Apps, and optional agents of an existing product project into a Claude-format plugin directory and ZIP for HuiMate/DSH import. Use when a product team wants to package or update its integration for this platform.
+description: Assemble the skills, MCP services, MCP Apps, business workbench entries, and optional agents of an existing product project into a Claude-format plugin directory and ZIP for HuiMate/DSH import. Use when a product team wants to package or update its integration for this platform.
 ---
 
 # Package a product plugin
@@ -22,11 +22,12 @@ Use the project's established release-source location, or a dedicated `plugin/` 
 - Create `.claude-plugin/plugin.json` with real identity, version and description. Include only capabilities actually supplied. Keep this plugin's name stable across updates.
 - Copy each complete product skill directory, including referenced scripts, templates and documentation. Do not include repository-maintenance skills or this packaging skill unless the requested product actually distributes them.
 - Put ordinary service connections in `.mcp.json`. Put services requiring interactive MCP Apps pages in root `.mcpapps.json`; reference that file through `plugin.json.mcpServers`. A service offering both ordinary tools and a page belongs in `.mcpapps.json` once.
+- When the product has an existing business workbench, include root `.workbenches.json` following [the workbench contract](references/workbenches.md). Generate its identity and resolver binding from the real product; package it once with the MCP/Skills. Do not add a second upload or copy the business application into the host.
 - Put optional product agents in `agents/`. Preserve required permissions; an unsupported restriction is a compatibility blocker, not a reason to delete the restriction. Prefer standard `model: inherit` when the product does not require a particular model.
 - Declare install-time values with `userConfig`, mark secrets sensitive, and use `${user_config.KEY}` references. Do not ship credentials, local account files or machine-specific absolute paths. Include a README describing service deployment, runtime prerequisites, configuration and verification steps.
 - For bundled programs, preserve their required files and licenses, and refer to them through `${CLAUDE_PLUGIN_ROOT}`. Build them using the product's release process before packaging. Keep remote deployments and system dependencies in that product's normal distribution process.
 
-Do not add a private `mcpApps` manifest field, page catalog, dependency format or ZIP-specific manifest. Marketplace publication is optional: a single-plugin ZIP needs no `marketplace.json`. When a marketplace entry is requested, use the standard example in the reference; do not publish or install into another system merely to produce the files.
+Do not add a private `mcpApps` manifest field, MCP Apps page catalog, dependency format or ZIP-specific manifest. Marketplace publication is optional: a single-plugin ZIP needs no `marketplace.json`. When a marketplace entry is requested, use the standard example in the reference; do not publish or install into another system merely to produce the files.
 
 ## Validate and package
 

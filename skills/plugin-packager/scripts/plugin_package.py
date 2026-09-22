@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import io
+import ipaddress
 import json
 import math
 import os
@@ -340,6 +341,69 @@ class Package:
                 inventory["mcpApps" if path == ".mcpapps.json" else "mcp"].append(key)
         return inventory
 
+    def workbenches(self, inventory: dict) -> list[str]:
+        if ".workbenches.json" not in self.files:
+            return []
+        data = self.read_json(".workbenches.json")
+        require(set(data) == {"version", "workbenches"} and type(data.get("version")) is int and data["version"] == 1, "Invalid workbench declaration version")
+        rows = data["workbenches"]
+        require(isinstance(rows, list) and 0 < len(rows) <= 32, "workbenches must contain 1–32 entries")
+        ids: list[str] = []
+        for row in rows:
+            require(isinstance(row, dict) and set(row) == {"id", "title", "launch", "page"}, "Invalid workbench fields")
+            identity = row["id"]
+            require(isinstance(identity, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", identity) and identity not in ids, "Invalid or duplicate workbench id")
+            require(nonempty(row["title"]) and len(row["title"]) <= 160, "Workbench title required")
+            launch, page = row["launch"], row["page"]
+            require(isinstance(launch, dict) and isinstance(page, dict), "Workbench launch/page must be objects")
+            kind = launch.get("kind")
+            expected = {"kind", "server", "tool", "arguments"} if kind == "mcp" else {"kind", "url", "arguments"}
+            require(isinstance(kind, str) and kind in {"mcp", "http"} and set(launch) == expected and isinstance(launch["arguments"], dict), "Invalid workbench resolver")
+            if kind == "mcp":
+                require(launch["server"] in inventory["mcp"], "Workbench resolver must use a declared ordinary MCP server")
+                require(isinstance(launch["tool"], str) and re.fullmatch(r"[A-Za-z0-9_.-]{1,128}", launch["tool"]), "Invalid resolver tool")
+            else:
+                require(nonempty(launch["url"]), "HTTP resolver URL required")
+            require(set(page) <= {"path", "origins", "loopback"} and "path" in page, "Invalid workbench page policy")
+            path = page["path"]
+            require(isinstance(path, str) and path.startswith("/") and not path.startswith("//") and not any(c in path for c in ["?", "#", "\\", "%", "${"]) and all(part not in {".", ".."} for part in path.split("/")), "Workbench page path must be fixed and absolute")
+            origins = page.get("origins")
+            require((page.get("loopback") is True and "origins" not in page) or ("loopback" not in page and isinstance(origins, list) and 0 < len(origins) <= 32), "Specify exact page origins or loopback:true")
+            def safe_values(value):
+                self.references(value)
+                if isinstance(value, dict):
+                    for nested in value.values(): safe_values(nested)
+                elif isinstance(value, list):
+                    for nested in value: safe_values(nested)
+                elif isinstance(value, str):
+                    for key in PARAM.findall(value):
+                        require(not self.options[key].get("sensitive"), "Workbench configuration cannot expose secrets")
+                    require("${" not in PARAM.sub("placeholder", value), "Unsupported workbench substitution")
+            safe_values(launch.get("arguments"))
+            if kind == "http": safe_values(launch["url"])
+            for origin in origins or []:
+                require(nonempty(origin), "Page origin required")
+                safe_values(origin)
+                if not PARAM.search(origin):
+                    parsed = urlsplit(origin)
+                    require(len(origin) <= 8192 and not re.search(r"[\x00-\x20\\]", origin), "Invalid page origin")
+                    host = parsed.hostname or ""
+                    require(origin.isascii() and "%" not in host, "Page origin must use an ASCII canonical host")
+                    if ":" in host:
+                        host = "[" + ipaddress.IPv6Address(host).compressed + "]"
+                    elif re.fullmatch(r"(?:0x[0-9a-f]+|[0-9]+)", host.rstrip(".").split(".")[-1]):
+                        host = str(ipaddress.IPv4Address(host))
+                    port = parsed.port
+                    suffix = "" if port is None or port == (80 if parsed.scheme == "http" else 443) else ":" + str(port)
+                    require(origin == parsed.scheme + "://" + host + suffix, "Page origin must be canonical")
+                    require(parsed.scheme in {"http", "https"} and parsed.netloc and not parsed.username and not parsed.password and not parsed.path and not parsed.query and not parsed.fragment, "Page origins must be exact HTTP(S) origins")
+            if kind == "http" and not PARAM.search(launch["url"]):
+                require(len(launch["url"]) <= 8192 and not re.search(r"[\x00-\x20\\]", launch["url"]), "Invalid HTTP resolver URL")
+                parsed = urlsplit(launch["url"])
+                require(parsed.scheme in {"http", "https"} and parsed.netloc and not parsed.username and not parsed.password and not parsed.fragment, "Invalid HTTP resolver URL")
+            ids.append(identity)
+        return ids
+
     def validate(self) -> dict:
         manifest = self.manifest
         require(nonempty(manifest.get("name")) and NAME.fullmatch(manifest["name"]) and len(manifest["name"]) <= 64, "plugin.json: require a kebab-case name, at most 64 characters")
@@ -360,6 +424,8 @@ class Package:
         if "README.md" not in self.files: self.warnings.append("Add README.md with deployment, configuration and verification steps")
         self.parameters()
         inventory = {**self.skills_and_agents(), **self.connections()}
+        workbenches = self.workbenches(inventory)
+        if workbenches: inventory["workbenches"] = workbenches
         require(any(inventory.values()), "No supported capabilities found")
         self.markdown_links()
         return {"ok": True, "name": manifest["name"], "version": version, "capabilities": inventory,

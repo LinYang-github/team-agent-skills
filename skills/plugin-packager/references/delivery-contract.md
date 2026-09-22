@@ -11,6 +11,7 @@ plugin/
   .claude-plugin/plugin.json
   .mcp.json                         # only if ordinary services exist
   .mcpapps.json                     # only if Apps services exist
+  .workbenches.json                 # optional HuiMate workbench entries
   skills/product-guide/SKILL.md
   skills/product-guide/references/usage.md
   agents/reviewer.md                # optional
@@ -92,7 +93,7 @@ The target machine must provide the documented runtime. A source checkout, missi
 
 ## MCP Apps requirements
 
-`.mcpapps.json` is the only platform-specific delivery convention. Claude's standard path reference can read the file as ordinary MCP configuration; another client may not implement its Apps classification.
+`.mcpapps.json` classifies MCP Apps connections. The separate [workbench extension](workbenches.md) declares existing business webpage entries; it does not turn them into MCP Apps. Claude's standard path reference can read the file as ordinary MCP configuration; another client may not implement its Apps classification.
 
 The MCP service must advertise the page association in tools (standard `_meta.ui.resourceUri`), serve its `ui://` resource with `text/html;profile=mcp-app`, and implement the applicable MCP Apps communication. The resource is read over MCP; a local HTML file in the ZIP alone is insufficient. The host discovers actual tools/pages after connecting. Do not put Uni Editor, host plugin IDs or an invented page list into the product manifest.
 
