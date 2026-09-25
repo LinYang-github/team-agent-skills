@@ -39,6 +39,35 @@ class PluginPackagerTests(unittest.TestCase):
         self.assertEqual(result.stderr, "")
         return result.returncode, json.loads(result.stdout)
 
+    def test_rejects_skill_root_evals_without_mutating_release(self):
+        for empty in (True, False):
+            with self.subTest(empty=empty):
+                directory = self.product / "skills/guide/evals"
+                directory.mkdir(exist_ok=True)
+                if not empty:
+                    self.put("skills/guide/evals/answers.yaml", "expected: private\n")
+                for action in ("validate", "pack"):
+                    code, result = self.run_packager(action)
+                    self.assertNotEqual(code, 0)
+                    self.assertIn("Remove Skill evaluation material", result["error"])
+                    self.assertIn("skills/guide/evals", result["error"])
+                    self.assertFalse(self.output.exists())
+                    self.assertTrue(directory.is_dir())
+                if not empty:
+                    self.assertEqual((directory / "answers.yaml").read_text(), "expected: private\n")
+
+    def test_preserves_nested_and_non_skill_evals(self):
+        paths = ["skills/guide/references/evals/runtime.md", "evals/runtime.md"]
+        for path in paths:
+            self.put(path, "Runtime material.\n")
+        code, result = self.run_packager("validate")
+        self.assertEqual(code, 0, result)
+        code, result = self.run_packager()
+        self.assertEqual(code, 0, result)
+        with zipfile.ZipFile(self.output) as archive:
+            for path in paths:
+                self.assertEqual(archive.read(path), b"Runtime material.\n")
+
     def workbench(self, **changes):
         entry = {"id": "product.catalog", "title": "Product catalog", "launch": {"kind": "http", "url": "https://example.invalid/resolve", "arguments": {}}, "page": {"path": "/catalog/", "origins": ["https://example.invalid"]}}
         entry.update(changes)

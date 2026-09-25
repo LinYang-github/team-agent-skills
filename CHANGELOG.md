@@ -2,6 +2,8 @@
 
 ## 未发布
 
+- plugin-packager 0.2.2: reject Skill-root `evals/` in both validation and packaging; preserve nested runtime material and source files.
+
 - 明确 plugin-packager 组包时不携带产品 Skill 根目录的 `evals/` 评估用例与预期答案，避免安装后的模型读取。
 - 从 HuiMate 迁入 plugin-packager，统一维护完整 Skill、Python 标准库组包脚本及交付参考，增加独立脚本回归。
 - 明确领域包按意图选择对话、卡片/侧边栏或完整页面，普通首轮与少量增量澄清不因 MCP App 可用而自动渲染，明确打开页面时绕过过渡卡片，并增加触发阈值评测。

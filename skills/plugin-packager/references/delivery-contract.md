@@ -149,3 +149,5 @@ A marketplace is a separate catalog of available plugins. When requested, add an
 ```
 
 The referenced directory must contain the complete product plugin. Follow the existing catalog's versioning and review process. Creating this file does not upload a ZIP, install a plugin, deploy the service or authorize publication.
+
+Both `validate` and `pack` reject a directory named `evals` directly beside a `SKILL.md`, even when empty. Remove it from the release tree before retrying; the validator does not delete source material. Deeper `references/evals/` and non-Skill `evals/` directories remain ordinary package content.

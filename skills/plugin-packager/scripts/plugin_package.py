@@ -82,6 +82,8 @@ def tree(root: Path) -> dict[str, tuple[bytes, int]]:
             require(stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode), f"Links/special files are not supported: {relative}")
             if stat.S_ISDIR(info.st_mode):
                 require(item.name not in FORBIDDEN_DIRS, f"Remove development data from the release tree: {relative}")
+                require(not (item.name == "evals" and (directory / "SKILL.md").is_file()),
+                        f"Remove Skill evaluation material from the release tree: {relative}")
                 visit(item)
                 continue
             forbidden = (item.name == ".env" or (item.name.startswith(".env.") and item.name != ".env.example")

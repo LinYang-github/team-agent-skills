@@ -56,3 +56,5 @@ Separate these results:
 3. **Runtime checks:** real connection, tool execution, model use and page interaction, only when actually performed.
 
 Do not present offline checks as successful service or UI validation. Leave unavailable checks explicit. The skill does not require access to the platform repository, a deployed instance, or any particular coding-agent tool.
+
+Both `validate` and `pack` reject a directory named `evals` directly beside a `SKILL.md`, even when empty. Remove it from the release tree before retrying; the validator does not delete source material. Deeper `references/evals/` and non-Skill `evals/` directories remain ordinary package content.
