@@ -21,6 +21,9 @@ cases:
     - evals/cases/runtime-packaging.yaml
     - evals/cases/view-launch-boundary.yaml
     - evals/cases/mcp-app-degradation.yaml
+    - evals/cases/surface-escalation.yaml
+    - evals/cases/workflow-composition.yaml
+    - evals/cases/release-replacement.yaml
   defaults:
     timeout_seconds: 120
     max_turns: 3
