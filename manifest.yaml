@@ -65,7 +65,7 @@ skills:
     owner: frontend-platform
     depends_on: []
   - name: plugin-packager
-    version: 0.2.0
+    version: 0.2.1
     status: active
     owner: engineering
     depends_on: []

@@ -2,6 +2,7 @@
 
 ## 未发布
 
+- 明确 plugin-packager 组包时不携带产品 Skill 根目录的 `evals/` 评估用例与预期答案，避免安装后的模型读取。
 - 从 HuiMate 迁入 plugin-packager，统一维护完整 Skill、Python 标准库组包脚本及交付参考，增加独立脚本回归。
 
 - 新增领域能力包改造 Skill，统一领域所有权、能力契约、Skill/CLI/MCP/API/SDK/Web 分工、CLI 命令设计、运行发行与迁移验收方法。

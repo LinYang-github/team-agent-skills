@@ -19,7 +19,7 @@ plugin/
   README.md
 ```
 
-Omit absent capabilities and their manifest references. The packager uses this conventional layout: skills are immediate subdirectories of `skills/`, agents are Markdown files in `agents/`. Manifest paths may select these directories or individual contained files. Other Claude components, custom layouts and complex frontmatter are outside this tool's validated subset; rejection does not mean they are invalid in Claude.
+Omit absent capabilities and their manifest references. Do not package a skill's root `evals/` directory: it holds test prompts and expected answers, and an installed model can read everything in the plugin. Keep it in the product repository. The packager uses this conventional layout: skills are immediate subdirectories of `skills/`, agents are Markdown files in `agents/`. Manifest paths may select these directories or individual contained files. Other Claude components, custom layouts and complex frontmatter are outside this tool's validated subset; rejection does not mean they are invalid in Claude.
 
 The single-plugin ZIP starts with `.claude-plugin/plugin.json` at its root. The platform also accepts one wrapper folder, but the script produces the simpler root form. Neither the ZIP nor the source directory contains a marketplace, a second product, or a root `plugin.json` that could select a different dialect.
 

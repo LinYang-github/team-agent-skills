@@ -6,7 +6,7 @@
 
 完整技能迁自 [HuiMate](https://github.com/WuFuxiu/HuiMate)，迁移源提交为 `30515e6dc90d91f4cf54c03a16d6770fdf889a92`，原目录为 `skills/plugin-packager/`。脚本和交付参考原样迁移；入口描述按团队校验器要求调整措辞，使用范围不变。本仓库是后续修改的唯一入口，不接受由原项目自动覆盖同步；维护版本见 [manifest.yaml](../manifest.yaml)。
 
-团队成员从 `develop` 创建工作分支并提交 PR。修改支持范围或格式时同步技能内的[交付契约](../skills/plugin-packager/references/delivery-contract.md)和回归。产品项目可以复制完整技能目录；不要只复制 `SKILL.md`。
+团队成员从 `develop` 创建工作分支并提交 PR。修改支持范围或格式时同步技能内的[交付契约](../skills/plugin-packager/references/delivery-contract.md)和回归。产品项目可以复制完整技能目录；不要只复制 `SKILL.md`。组包时不放入各产品 Skill 根目录下的 `evals/`（评估提示与预期答案），因为安装后的模型能读取插件中的全部文件。
 
 ## 业务工作台
 
