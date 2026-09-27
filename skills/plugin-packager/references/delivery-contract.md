@@ -11,6 +11,7 @@ plugin/
   .claude-plugin/plugin.json
   .mcp.json                         # only if ordinary services exist
   .mcpapps.json                     # only if Apps services exist
+  .workbenches.json                 # optional HuiMate workbench entries
   skills/product-guide/SKILL.md
   skills/product-guide/references/usage.md
   agents/reviewer.md                # optional
@@ -18,7 +19,7 @@ plugin/
   README.md
 ```
 
-Omit absent capabilities and their manifest references. The packager uses this conventional layout: skills are immediate subdirectories of `skills/`, agents are Markdown files in `agents/`. Manifest paths may select these directories or individual contained files. Other Claude components, custom layouts and complex frontmatter are outside this tool's validated subset; rejection does not mean they are invalid in Claude.
+Omit absent capabilities and their manifest references. Do not package a skill's root `evals/` directory: it holds test prompts and expected answers, and an installed model can read everything in the plugin. Keep it in the product repository. The packager uses this conventional layout: skills are immediate subdirectories of `skills/`, agents are Markdown files in `agents/`. Manifest paths may select these directories or individual contained files. Other Claude components, custom layouts and complex frontmatter are outside this tool's validated subset; rejection does not mean they are invalid in Claude.
 
 The single-plugin ZIP starts with `.claude-plugin/plugin.json` at its root. The platform also accepts one wrapper folder, but the script produces the simpler root form. Neither the ZIP nor the source directory contains a marketplace, a second product, or a root `plugin.json` that could select a different dialect.
 
@@ -92,7 +93,7 @@ The target machine must provide the documented runtime. A source checkout, missi
 
 ## MCP Apps requirements
 
-`.mcpapps.json` is the only platform-specific delivery convention. Claude's standard path reference can read the file as ordinary MCP configuration; another client may not implement its Apps classification.
+`.mcpapps.json` classifies MCP Apps connections. The separate [workbench extension](workbenches.md) declares existing business webpage entries; it does not turn them into MCP Apps. Claude's standard path reference can read the file as ordinary MCP configuration; another client may not implement its Apps classification.
 
 The MCP service must advertise the page association in tools (standard `_meta.ui.resourceUri`), serve its `ui://` resource with `text/html;profile=mcp-app`, and implement the applicable MCP Apps communication. The resource is read over MCP; a local HTML file in the ZIP alone is insufficient. The host discovers actual tools/pages after connecting. Do not put Uni Editor, host plugin IDs or an invented page list into the product manifest.
 
@@ -148,3 +149,5 @@ A marketplace is a separate catalog of available plugins. When requested, add an
 ```
 
 The referenced directory must contain the complete product plugin. Follow the existing catalog's versioning and review process. Creating this file does not upload a ZIP, install a plugin, deploy the service or authorize publication.
+
+Both `validate` and `pack` reject a directory named `evals` directly beside a `SKILL.md`, even when empty. Remove it from the release tree before retrying; the validator does not delete source material. Deeper `references/evals/` and non-Skill `evals/` directories remain ordinary package content.
