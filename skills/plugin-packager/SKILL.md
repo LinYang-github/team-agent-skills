@@ -30,6 +30,10 @@ Use the project's established release-source location, or a dedicated `plugin/` 
 
 Do not add a private `mcpApps` manifest field, MCP Apps page catalog, dependency format or ZIP-specific manifest. Marketplace publication is optional: a single-plugin ZIP needs no `marketplace.json`. When a marketplace entry is requested, use the standard example in the reference; do not publish or install into another system merely to produce the files.
 
+## Scenario capsules
+
+When the product also supplies HuiMate scenario capsules (场景胶囊), read [capsule delivery and registration](references/scenario-capsules.md). The current host can retain YAML as plugin attachments but does not register capsules from an imported plugin automatically. Include validated YAML and administrator instructions; report automatic registration as unsupported when it is required.
+
 ## Validate and package
 
 Resolve the script from this skill's actual location, independent of the current working directory. Paths below are placeholders; quote actual paths that contain spaces.

@@ -12,6 +12,10 @@
 
 产品同时提供业务工作台和 MCP/Skill 时，在同一插件根目录生成可选 `.workbenches.json`，无需第二次上传领域文件。声明只包含入口名称、解析方式与 URL 边界，不打入业务数据库或运行时。普通管理页面与 MCP Apps 分开，详细格式见[工作台交付契约](../skills/plugin-packager/references/workbenches.md)。
 
+## 场景胶囊
+
+可将场景胶囊 YAML 作为普通附件随插件 ZIP 交付，但当前 HuiMate 不会在导入插件后自动注册胶囊。管理员需将 YAML 部署到稳定目录，并在 `huimate-scenario-capsules-host.config.files` 登记绝对路径。胶囊 Schema 校验与插件组包校验是不同步骤；导入成功不代表首页胶囊可用。实现依据、校验命令、配置示例和升级/移除边界见技能内的[胶囊交付与注册说明](../skills/plugin-packager/references/scenario-capsules.md)。
+
 ## 验证
 
 ```bash

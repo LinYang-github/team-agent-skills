@@ -23,6 +23,10 @@ Omit absent capabilities and their manifest references. Do not package a skill's
 
 The single-plugin ZIP starts with `.claude-plugin/plugin.json` at its root. The platform also accepts one wrapper folder, but the script produces the simpler root form. Neither the ZIP nor the source directory contains a marketplace, a second product, or a root `plugin.json` that could select a different dialect.
 
+## Scenario capsule attachments
+
+Scenario capsule YAML may travel as ordinary attachments; it is not a discovered plugin component. See [capsule delivery and registration](scenario-capsules.md) for the separately verified host baseline, YAML validation and administrator registration. Neither ZIP import nor the packaging validator establishes capsule availability.
+
 ## Manifest and connections
 
 An illustrative mixed plugin (replace metadata and supply the real skill, agent and services):
