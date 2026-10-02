@@ -24,6 +24,9 @@ cases:
     - evals/cases/surface-escalation.yaml
     - evals/cases/workflow-composition.yaml
     - evals/cases/release-replacement.yaml
+    - evals/cases/business-rule-extraction.yaml
+    - evals/cases/machine-contract.yaml
+    - evals/cases/domain-use-case.yaml
   defaults:
     timeout_seconds: 120
     max_turns: 3

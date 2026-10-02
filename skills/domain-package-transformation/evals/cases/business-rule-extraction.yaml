@@ -1,0 +1,34 @@
+id: business-rule-extraction
+title: 从页面发现遗漏和冲突的业务规则
+description: 验证技能能否在产品改造中核对规则来源、统一领域校验，并保留合法草稿语义。
+
+input:
+  prompt: |
+    请使用 $domain-package-transformation 审查一个已有业务产品的领域包改造方案。产品已有页面和 API，准备增加 CLI 与 MCP。业务文档允许保存不完整草稿，但正式提交需要逐项执行方式与次数，且逐项合计必须等于总数。页面拒绝缺少逐项安排的正式提交，并额外要求每一项都达到指标参考样本量；文档并未规定该额外阈值。API 接受只有总数的空明细并标为 ready。团队计划直接复制页面校验到 MCP，后端保持原状。
+
+    请给出改造审查：如何核实规则来源和范围，哪些规则归领域服务，如何处理页面与 API 的冲突，以及怎样验证各入口语义一致。不要计算具体业务方案，也不要将所有草稿保存都改成必须完整。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 1000 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["来源|业务文档|证据"]
+    - output_matches:
+        any: ["阈值.*(?:核实|确认|不.*照搬)|不.*(?:复制|照搬).*页面|页面.*历史.*缺陷"]
+    - output_matches:
+        any: ["领域服务|服务端.*统一|共享.*校验"]
+    - output_matches:
+        any: ["草稿.*(?:允许|保留|不完整|缺项)|允许.*草稿"]
+    - output_matches:
+        any: ["正式.*(?:提交|完成)|readiness|就绪"]
+    - output_matches:
+        any: ["跨渠道|各入口|多个渠道|API.*(?:CLI|MCP)"]
