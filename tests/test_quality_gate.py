@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -108,19 +109,20 @@ class QualityGateTests(unittest.TestCase):
         self.assertTrue(any("文件类型禁止提交" in item for item in violations))
 
     def test_agent_command_cli_strips_argument_separator(self) -> None:
+        script = str(ROOT / "scripts" / "run-quality-gate.sh")
+        sh = shutil.which("sh") if os.name == "nt" else None
+        if os.name == "nt" and not sh:
+            self.skipTest("Windows 上需要 Git Bash 提供的 sh")
+        command = [*( [sh, script] if sh else [script] ),
+                   "agent-command", "--", "git", "reset", "--hard", "HEAD~1"]
         result = subprocess.run(
-            [
-                str(ROOT / "scripts" / "run-quality-gate.sh"),
-                "agent-command",
-                "--",
-                "git",
-                "reset",
-                "--hard",
-                "HEAD~1",
-            ],
+            command,
             cwd=ROOT,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
+            env={**os.environ, "PYTHONIOENCODING": "utf-8"},
             check=False,
         )
         self.assertEqual(result.returncode, 1)

@@ -7,6 +7,7 @@ import fnmatch
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
@@ -257,11 +258,20 @@ def validate_agent_command(
     return violations
 
 
+def run_shell(command: str, cwd: Path) -> subprocess.CompletedProcess:
+    # Windows 下 shell=True 走 cmd.exe，无法执行 "./scripts/*.sh" 这类 POSIX 命令，
+    # 需改用 Git 自带的 sh 执行；找不到 sh 时退回系统默认 shell。
+    sh = shutil.which("sh") if os.name == "nt" else None
+    if sh:
+        return subprocess.run([sh, "-c", command], cwd=cwd, check=False)
+    return subprocess.run(command, cwd=cwd, shell=True, check=False)
+
+
 def run_commands(root: Path, commands: list[str], stage: str) -> list[str]:
     violations: list[str] = []
     for command in commands:
         print(f"[RUN] {command}")
-        result = subprocess.run(command, cwd=root, shell=True, check=False)
+        result = run_shell(command, root)
         if result.returncode:
             violations.append(f"{stage} 命令失败（退出码 {result.returncode}）：{command}")
     return violations
