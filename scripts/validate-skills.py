@@ -163,14 +163,23 @@ checked_links = validate_local_links(markdown_files)
 
 shells = sorted((ROOT / "scripts").glob("*.sh"))
 shells.extend(sorted((ROOT / ".githooks").iterdir()))
-for script in shells:
-    result = subprocess.run(
-        ["bash", "-n", str(script)],
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode:
-        fail(f"Shell 语法错误：{script.name}\n{result.stderr.strip()}")
+bash = shutil.which("bash")
+if os.name == "nt" and bash and "system32" in bash.lower():
+    # System32\bash.exe 是 WSL 的占位程序，读不了 Windows 路径，视同未安装 bash。
+    bash = None
+checked_shells = 0
+if bash is None:
+    print("未找到可用的 bash，跳过 Shell 语法检查。")
+else:
+    for script in shells:
+        result = subprocess.run(
+            [bash, "-n", str(script)],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode:
+            fail(f"Shell 语法错误：{script.name}\n{result.stderr.strip()}")
+        checked_shells += 1
 
 executables = [
     ROOT / "scripts" / "quality_gate.py",
@@ -195,5 +204,5 @@ else:
 
 print(f"Skill 数量：{len(skill_dirs)}")
 print(f"本地 Markdown 链接：{checked_links}，有效性检查通过")
-print(f"Shell 脚本与 Git Hook：{len(shells)}，语法检查通过")
+print(f"Shell 脚本与 Git Hook：{checked_shells}，语法检查通过")
 print("Skill 结构校验通过")

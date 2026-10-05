@@ -1,0 +1,36 @@
+id: machine-contract
+title: 面向机器调用方的完整业务契约
+description: 验证技能能否补齐业务结构与字段含义，并检查适配器实际公开的规则。
+
+input:
+  prompt: |
+    请使用 $domain-package-transformation 审查一个产品的 API/MCP 改造。公共契约把业务明细声明为任意对象数组，taskId 和 version 仅说明为字符串；固定结构中的拼错字段会被静默丢弃。算法目录只返回算法 ID 与 schema 版本，调用方拿不到参数定义。原契约已有部分字段说明，但转成 MCP 的联合分支后丢失。另有明确用于保存外部原始结果的开放字典，不能把它一并封闭。团队认为 tools/list 的工具数量与源码相同就算完成。
+
+    请给出机器契约及适配器检查方案，说明嵌套结构、条件要求、身份与版本来源、动态参数、未知字段和错误恢复应如何设计。仅审查改造，不调用实际工具或编造业务数据。
+
+    若工具列表中存在团队 Skill，必须先加载；加载 Skill 是本用例唯一允许的工具调用。若不存在团队 Skill，则直接作答。不要读取或修改工作区，也不要调用其他工具。控制在 1000 字以内。
+
+constraints:
+  timeout_seconds: 120
+  max_turns: 3
+
+expect:
+  exit_code: 0
+
+judge:
+  type: rule_based
+  success:
+    - output_matches:
+        any: ["嵌套|数组成员|条件必填"]
+    - output_matches:
+        any: ["回执|创建.*(?:查询|返回)|身份.*来源|ID.*来源"]
+    - output_matches:
+        any: ["算法.*(?:schema|Schema|参数定义)|版本化.*schema"]
+    - output_matches:
+        any: ["未知字段.*(?:拒绝|报错)|拒绝.*未知|additionalProperties"]
+    - output_matches:
+        any: ["开放.*(?:字典|容器|结果)|扩展.*开放"]
+    - output_matches:
+        any: ["tools/list.*(?:schema|Schema|说明|分支)|实际.*(?:契约|schema|Schema|工具定义)"]
+    - output_matches:
+        any: ["修正|恢复|错误.*来源"]

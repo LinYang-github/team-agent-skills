@@ -29,7 +29,8 @@ class PluginPackagerTests(unittest.TestCase):
     def put(self, name: str, content: str) -> None:
         path = self.product / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
+        # 固定换行为 LF，避免 Windows 文本模式把合成文件改写成 CRLF 后影响字节级断言。
+        path.write_text(content, encoding="utf-8", newline="\n")
 
     def run_packager(self, action: str = "pack") -> tuple[int, dict]:
         command = [sys.executable, "-I", str(self.skill / "scripts" / "plugin_package.py"), action, str(self.product)]
