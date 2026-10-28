@@ -13,12 +13,6 @@ skills:
     owner: engineering
     depends_on:
       - common-coding-standards
-  - name: domain-package-transformation
-    version: 0.3.0
-    status: active
-    owner: engineering
-    depends_on:
-      - common-coding-standards
   - name: cpp-coding-standard
     version: 0.3.0
     status: active
@@ -63,9 +57,4 @@ skills:
     version: 1.2.0
     status: active
     owner: frontend-platform
-    depends_on: []
-  - name: plugin-packager
-    version: 0.2.3
-    status: active
-    owner: engineering
     depends_on: []
