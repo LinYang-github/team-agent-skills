@@ -2,6 +2,8 @@
 
 ## 未发布
 
+- 移除 domain-package-transformation 和 plugin-packager 技能，并清理清单、使用入口、专属维护文档及回归测试。
+
 - plugin-packager 0.2.2: reject Skill-root `evals/` in both validation and packaging; preserve nested runtime material and source files.
 
 - 明确 plugin-packager 组包时不携带产品 Skill 根目录的 `evals/` 评估用例与预期答案，避免安装后的模型读取。
