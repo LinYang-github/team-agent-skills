@@ -258,13 +258,20 @@ def validate_agent_command(
     return violations
 
 
+GIT_HOOK_ENV_VARS = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR",
+                     "GIT_OBJECT_DIRECTORY", "GIT_PREFIX")
+
+
 def run_shell(command: str, cwd: Path) -> subprocess.CompletedProcess:
     # Windows 下 shell=True 走 cmd.exe，无法执行 "./scripts/*.sh" 这类 POSIX 命令，
     # 需改用 Git 自带的 sh 执行；找不到 sh 时退回系统默认 shell。
+    # 在 Git 钩子里运行时会继承 GIT_DIR 等变量，检查命令（尤其是会建临时仓库的测试）
+    # 若带着它们执行，git 操作会落到真实仓库，所以先清掉；cwd 已是仓库根目录。
+    env = {key: value for key, value in os.environ.items() if key not in GIT_HOOK_ENV_VARS}
     sh = shutil.which("sh") if os.name == "nt" else None
     if sh:
-        return subprocess.run([sh, "-c", command], cwd=cwd, check=False)
-    return subprocess.run(command, cwd=cwd, shell=True, check=False)
+        return subprocess.run([sh, "-c", command], cwd=cwd, env=env, check=False)
+    return subprocess.run(command, cwd=cwd, shell=True, env=env, check=False)
 
 
 def run_commands(root: Path, commands: list[str], stage: str) -> list[str]:

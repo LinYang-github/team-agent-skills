@@ -345,9 +345,6 @@ class ShellRulesTests(unittest.TestCase):
         self.assertIn("分支名", result.stderr)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class PluginVersionBumpTests(unittest.TestCase):
     """scripts/check-plugin-version-bump.sh：改了钩子复制文件就必须升版本号。"""
@@ -355,6 +352,11 @@ class PluginVersionBumpTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
         self.repo = Path(self.tmp.name)
+        # 在 pre-push 等 Git 钩子里运行时会继承 GIT_DIR 等变量，必须清掉，
+        # 否则测试提交会写进真实仓库。
+        self.env = {k: v for k, v in os.environ.items()
+                    if k not in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR")}
+        self.env.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
         script_dir = self.repo / "scripts"
         script_dir.mkdir()
         shutil.copy(ROOT / "scripts" / "check-plugin-version-bump.sh", script_dir)
@@ -372,7 +374,7 @@ class PluginVersionBumpTests(unittest.TestCase):
     def git(self, *args: str) -> None:
         subprocess.run(
             ["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "core.hooksPath=/dev/null", *args],
-            cwd=self.repo, check=True, capture_output=True,
+            cwd=self.repo, env=self.env, check=True, capture_output=True,
         )
 
     def write_version(self, version: str) -> None:
@@ -380,7 +382,7 @@ class PluginVersionBumpTests(unittest.TestCase):
 
     def check(self) -> subprocess.CompletedProcess:
         return subprocess.run(["sh", "scripts/check-plugin-version-bump.sh"], cwd=self.repo,
-                              capture_output=True, encoding="utf-8", errors="replace")
+                              env=self.env, capture_output=True, encoding="utf-8", errors="replace")
 
     def commit_change(self, path: str) -> None:
         target = self.repo / path
@@ -413,3 +415,7 @@ class PluginVersionBumpTests(unittest.TestCase):
         result = self.check()
         self.assertEqual(result.returncode, 0)
         self.assertIn("跳过", result.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()
