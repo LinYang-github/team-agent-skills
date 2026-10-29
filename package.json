@@ -1,0 +1,15 @@
+{
+  "name": "team-standards",
+  "private": true,
+  "version": "0.1.0",
+  "description": "团队编码规范与 Git 门禁",
+  "files": [
+    "skills/",
+    "hooks/",
+    ".agents/plugins/marketplace.json",
+    ".claude-plugin/",
+    ".codex-plugin/",
+    "docs/插件安装与更新.md",
+    "quality-gates.json"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "team-agent-skills",
+  "interface": {
+    "displayName": "Team Agent Skills"
+  },
+  "plugins": [
+    {
+      "name": "team-standards",
+      "source": {
+        "source": "url",
+        "url": "./"
+      },
+      "version": "0.1.0",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

@@ -21,6 +21,10 @@
 
 ## 安装
 
+Codex、ZCode 和 dsh 推荐安装 `team-standards` 插件，市场名为 `team-agent-skills`，默认跟随 `develop`。安装、更新、项目 Git 钩子和卸载见 [插件安装与更新](docs/插件安装与更新.md)。
+
+以下旧安装脚本作为备用方式保留：
+
 安装全部内部 Skill：
 
 ```bash
