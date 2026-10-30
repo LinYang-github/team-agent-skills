@@ -342,7 +342,11 @@ class ShellRulesTests(unittest.TestCase):
             versions.append(manifest["version"])
             if filename != "package.json":
                 self.assertEqual(manifest["skills"], "./skills/")
-                self.assertEqual(manifest["hooks"], "./hooks/hooks.json")
+                if filename == ".claude-plugin/plugin.json":
+                    # Claude Code / ZCode 自动加载 hooks/hooks.json，再声明会被当作重复文件。
+                    self.assertNotIn("hooks", manifest)
+                else:
+                    self.assertEqual(manifest["hooks"], "./hooks/hooks.json")
         for filename in (".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json"):
             manifest = json.loads((ROOT / filename).read_text())
             self.assertEqual(manifest["name"], "team-agent-skills")
