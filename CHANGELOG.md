@@ -2,6 +2,8 @@
 
 ## 未发布
 
+- team-standards 0.1.3：为 Agent 预检补充 `bash` 和 `pwsh` 工具匹配，修复 HuiMate / DeepSeek Harness 中团队 Git 规则未被调用的问题，并增加工具选择与阻断回归验证。
+
 - 移除 domain-package-transformation 和 plugin-packager 技能，并清理清单、使用入口、专属维护文档及回归测试。
 
 - plugin-packager 0.2.2: reject Skill-root `evals/` in both validation and packaging; preserve nested runtime material and source files.

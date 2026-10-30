@@ -367,7 +367,7 @@ class ShellRulesTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2, result.stderr)
         self.assertIn("分支名", result.stderr)
 
-    def test_hooks_json_commands_block_without_exec_bit(self) -> None:
+    def test_hooks_json_selects_shell_tools_and_blocks_without_exec_bit(self) -> None:
         # ZCode 从 Git 市场安装时丢掉可执行位；按 hooks.json 原文经 shell 执行，
         # 必须仍以退出码 2 拦截（其他非零退出码会被客户端放行）。
         plugin = self.work / "plugin root"
@@ -379,12 +379,22 @@ class ShellRulesTests(unittest.TestCase):
         config = json.loads((ROOT / "hooks/hooks.json").read_text(encoding="utf-8"))
         commands = {event: entries[0]["hooks"][0]["command"].replace("${CLAUDE_PLUGIN_ROOT}", str(plugin))
                     for event, entries in config["hooks"].items()}
-        payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": "git checkout -b codex/test_20261030"}})
-        result = self.run_sh("-c", commands["PreToolUse"], stdin=payload)
-        self.assertEqual(result.returncode, 2, result.stderr)
-        self.assertIn("分支名", result.stderr)
-        ok = json.dumps({"tool_name": "Bash", "tool_input": {"command": "git checkout -b feature/add-login"}})
-        self.assertEqual(self.run_sh("-c", commands["PreToolUse"], stdin=ok).returncode, 0)
+        for tool_name in ("Bash", "bash", "pwsh"):
+            with self.subTest(tool_name=tool_name):
+                # HuiMate 保留原始工具名；Claude 的字面量 matcher 按 | 分隔精确匹配。
+                groups = [group for group in config["hooks"]["PreToolUse"]
+                          if tool_name in group["matcher"].split("|")]
+                self.assertEqual(len(groups), 1, f"{tool_name} 未选中唯一的 PreToolUse 钩子")
+                command = groups[0]["hooks"][0]["command"].replace("${CLAUDE_PLUGIN_ROOT}", str(plugin))
+                payload = json.dumps({"tool_name": tool_name,
+                                      "tool_input": {"command": "git switch -c codex/test_20261030_1; git branch --show-current"}})
+                result = self.run_sh("-c", command, stdin=payload)
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn("分支名", result.stderr)
+                ok = json.dumps({"tool_name": tool_name,
+                                 "tool_input": {"command": "git switch -c feature/add-login"}})
+                result = self.run_sh("-c", command, stdin=ok)
+                self.assertEqual(result.returncode, 0, result.stderr)
         repo = self.repository()
         result = self.run_sh("-c", commands["SessionStart"], stdin="{}", cwd=repo)
         self.assertEqual(result.returncode, 0, result.stderr)
