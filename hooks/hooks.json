@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "true && exec sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" agent-command || \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" agent-command",
+            "command": "true && exec sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" agent-command || powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.ps1\" agent-command",
             "timeout": 10
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "true && exec sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start || \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start",
+            "command": "true && exec sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start || powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.ps1\" session-start",
             "timeout": 10
           }
         ]

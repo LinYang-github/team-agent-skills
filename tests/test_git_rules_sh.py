@@ -400,6 +400,50 @@ class ShellRulesTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("team-standards", result.stdout)
 
+    @unittest.skipUnless(os.name == "nt", "requires Windows shell hosts")
+    def test_windows_shell_hosts_preserve_hook_decisions(self) -> None:
+        plugin = self.work / "plugin root 中文"
+        shutil.copytree(ROOT / "hooks", plugin / "hooks")
+        shutil.copy(ROOT / "package.json", plugin / "package.json")
+        config = json.loads((ROOT / "hooks/hooks.json").read_text(encoding="utf-8"))
+        commands = {event: entries[0]["hooks"][0]["command"].replace("${CLAUDE_PLUGIN_ROOT}", str(plugin))
+                    for event, entries in config["hooks"].items()}
+        hosts = ["cmd"]
+        if shutil.which("pwsh"):
+            hosts.append("pwsh")
+        repo = self.repository()
+        for host in hosts:
+            for command, denied in (("git switch -c codex/test_20261030_123", True),
+                                    ("git switch -c feature/add-login", False),
+                                    ('git commit -m "新增: 支持中文登录"', False)):
+                with self.subTest(host=host, command=command):
+                    payload = json.dumps({"tool_name": "pwsh", "cwd": str(repo),
+                                          "tool_input": {"command": command}})
+                    result = self.run_windows_hook(host, commands["PreToolUse"], payload, repo)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    if denied:
+                        output = json.loads(result.stdout)["hookSpecificOutput"]
+                        self.assertEqual(output["hookEventName"], "PreToolUse")
+                        self.assertEqual(output["permissionDecision"], "deny")
+                        self.assertIn("分支名", output["permissionDecisionReason"])
+                    else:
+                        self.assertEqual(result.stdout.strip(), "")
+            with self.subTest(host=host, event="SessionStart"):
+                result = self.run_windows_hook(host, commands["SessionStart"], "{}", repo)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn("team-standards", result.stdout)
+
+    def run_windows_hook(self, host: str, command: str, payload: str,
+                         cwd: Path) -> subprocess.CompletedProcess:
+        if host == "cmd":
+            # cmd parses /c text itself; Python's argv quoting would escape its quotes.
+            invocation = f'"{os.environ["COMSPEC"]}" /d /s /c "{command}"'
+        else:
+            invocation = [shutil.which("pwsh"), "-NoLogo", "-NoProfile", "-NonInteractive",
+                          "-Command", command]
+        return subprocess.run(invocation, input=payload, cwd=cwd, env=self.env,
+                              capture_output=True, encoding="utf-8", timeout=20)
+
 
 
 class PluginVersionBumpTests(unittest.TestCase):

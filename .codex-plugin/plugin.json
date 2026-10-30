@@ -1,6 +1,6 @@
 {
   "name": "team-standards",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "团队编码规范与 Git 分支、提交和推送门禁",
   "skills": "./skills/",
   "hooks": "./hooks/hooks.json"
