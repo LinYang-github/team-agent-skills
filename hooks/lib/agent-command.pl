@@ -20,7 +20,15 @@ if (ref($tool) ne 'HASH') {
     exit 1;
 }
 my $command = $tool->{command} // $tool->{cmd} // '';
-exit 0 if ref($command) || !length($command);
+# Codex may pass argv, e.g. ["zsh", "-lc", "git switch -c x"].
+my $argv;
+if (ref($command) eq 'ARRAY') {
+    exit 0 if grep { ref($_) || !defined($_) } @$command;
+    $argv = $command;
+    exit 0 unless @$argv;
+} elsif (ref($command) || !length($command)) {
+    exit 0;
+}
 my $cwd = $tool->{workdir} // $tool->{cwd} // $input->{cwd};
 if (defined $cwd && !chdir encode_utf8($cwd)) {
     print STDERR "无法进入 Agent 命令目录，请检查 tool_input.workdir / cwd。\n";
@@ -156,14 +164,35 @@ sub push_check {
 }
 
 use File::Spec;
-my @queue = commands($command);
+# The script argument of `sh -c`, `bash -lc`, `zsh -l -c`, `pwsh -Command`.
+sub wrapped_script {
+    my (@words) = @_;
+    my $shell = shift @words;
+    if ($shell =~ m{(?:^|[/\\])(?:ba|z|da|k)?sh(?:\.exe)?$}i) {
+        my $has_c;
+        while (@words && $words[0] =~ /^-/ && $words[0] ne '--') {
+            my $opt = shift @words;
+            $has_c = 1 if $opt =~ /^-[A-Za-z]*c[A-Za-z]*$/;
+            shift @words if $opt =~ /^[-+]o$/ && @words; # -o option-name
+        }
+        return $has_c && @words ? $words[0] : undef;
+    }
+    if ($shell =~ m{(?:^|[/\\])(?:pwsh|powershell)(?:\.exe)?$}i) {
+        for (my $i = 0; $i < @words; $i++) {
+            return join(' ', @words[$i + 1 .. $#words])
+                if $words[$i] =~ /^-(?:c|command)$/i && $i + 1 < @words;
+        }
+    }
+    return undef;
+}
+
+my @queue = $argv ? ([@$argv]) : commands($command);
 while (@queue) {
     my @words = @{shift @queue};
     shift @words while @words && ($words[0] =~ /^[A-Za-z_][A-Za-z_0-9]*=/ || $words[0] =~ /^(?:env|command|exec)$/);
     next unless @words;
-    if ($words[0] =~ m{(?:^|/)(?:ba|z|da)?sh$} && @words >= 3 && $words[1] eq '-c') {
-        push @queue, commands($words[2]); next;
-    }
+    my $script = wrapped_script(@words);
+    if (defined $script) { push @queue, commands($script); next; }
     next unless shift(@words) =~ m{(?:^|[/\\])git(?:\.exe)?$};
     my @context;
     while (@words && $words[0] =~ /^-/) {
@@ -183,6 +212,13 @@ while (@queue) {
                      ($verb eq 'switch' && $arg =~ /^(?:-[cC]|--(?:force-)?create=)(.+)$/)) {
                 validate('branch', $1);
             }
+        }
+    } elsif ($verb eq 'worktree') {
+        next unless @words && shift(@words) eq 'add';
+        for (my $i = 0; $i < @words; $i++) {
+            last if $words[$i] eq '--';
+            if ($words[$i] =~ /^-[bB]$/) { validate('branch', $words[++$i]) if $i + 1 < @words; }
+            elsif ($words[$i] =~ /^-[bB](.+)$/) { validate('branch', $1); }
         }
     } elsif ($verb eq 'branch') {
         # Listing, deleting, renaming, copying and upstream operations do not create

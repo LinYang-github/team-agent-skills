@@ -161,6 +161,12 @@ class ShellRulesTests(unittest.TestCase):
             ("git status; git checkout -b bad", 2),
             ("git status\ngit switch -c bad", 2),
             ("sh -c 'git switch -c bad'", 2), ("command git branch bad", 2),
+            ('zsh -lc "git switch -c codex/work-20261030"', 2),
+            ("bash -lc 'git checkout -b codex/x'", 2), ("/bin/zsh -l -c 'git branch bad'", 2),
+            ("bash -lc 'git switch -c feature/good'", 0), ("bash -l script.sh", 0),
+            ("pwsh -NoProfile -Command git switch -c bad", 2),
+            ("git worktree add -b codex/x ../x", 2), ("git worktree add -bbad ../x", 2),
+            ("git worktree add -b feature/good ../x", 0), ("git worktree add ../x main", 0),
             ("echo ok # git branch bad", 0), ("git status", 0), ("ls -la", 0),
         ]
         for camel in (False, True):
@@ -168,6 +174,19 @@ class ShellRulesTests(unittest.TestCase):
                 with self.subTest(command=command, camel=camel):
                     result = self.agent(command, camel=camel)
                     self.assertEqual(result.returncode, expected, result.stderr)
+
+    def test_agent_argv_command(self) -> None:
+        cases = [
+            (["zsh", "-lc", "git switch -c codex/work-20261030"], 2),
+            (["git", "checkout", "-b", "bad"], 2),
+            (["bash", "-lc", "git switch -c feature/good"], 0),
+            (["ls", "-la"], 0), ([], 0),
+        ]
+        for command, expected in cases:
+            with self.subTest(command=command):
+                payload = {"cwd": str(self.work), "tool_input": {"command": command}}
+                result = self.run_sh(RULES, "agent-command", stdin=json.dumps(payload))
+                self.assertEqual(result.returncode, expected, result.stderr)
 
     def test_agent_implicit_push_workdir_and_configured_destination(self) -> None:
         repo = self.repository()
