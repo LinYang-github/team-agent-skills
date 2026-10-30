@@ -8,9 +8,13 @@
 | Agent 钩子（`hooks/`） | Agent 执行建分支、`git commit -m`、推送受保护分支前先预检，不合规直接拦下 | 插件安装并**信任钩子**后生效 |
 | 项目 Git 钩子 | 在你的项目里检查实际的提交信息和推送分支，Agent 钩子没生效时兜底 | 每个项目**手动启用一次** |
 
-支持的客户端：Codex、ZCode、dsh（含 HuiMate）。Claude、Grok 暂时用[备用安装脚本](#备用安装方式)。
+支持的客户端：Codex、ZCode、HuiMate。Claude、Grok 暂时用[备用安装脚本](#备用安装方式)。
 
-> 插件名 `team-standards`，市场名 `team-agent-skills`，默认跟随 `develop` 分支。下文示例使用 GitHub 地址，内网使用时替换为团队仓库地址。
+> 插件名 `team-standards`，市场名 `team-agent-skills`，默认跟随 `develop` 分支。三个客户端都是“添加市场地址 → 安装插件”两步，市场地址统一为：
+>
+> `https://github.com/LinYang-github/team-agent-skills.git`，分支 `develop`
+>
+> 内网使用时替换为团队仓库地址：HTTPS 地址保留结尾的 `.git`；SSH 使用 `git@host:group/repo.git` 形式。
 
 ## 前置依赖
 
@@ -35,25 +39,32 @@ codex plugin marketplace add https://github.com/LinYang-github/team-agent-skills
 codex plugin add team-standards@team-agent-skills
 ```
 
-新建会话时会提示 “N hooks need review”，选择 **Trust all and continue**。不信任或使用无头 `codex exec` 时，Agent 钩子不会运行。
+也可以在 Codex 里输入 `/plugins`，从 `team-agent-skills` 市场安装。安装后**新建会话**，启动时会提示 “N hooks need review”，选择 **Trust all and continue**。不信任或使用无头 `codex exec` 时，Agent 钩子不会运行。
 
 **ZCode**
+
+桌面端：设置 → 插件 → 右上角「创建」→「添加插件市场」，地址填 `https://github.com/LinYang-github/team-agent-skills.git#develop`（分支用 `#` 接在 `.git` 后面），添加后在插件列表中安装 `team-standards`。
+
+命令行（需要已安装 `zcode` CLI）：
 
 ```bash
 zcode plugins marketplace add "https://github.com/LinYang-github/team-agent-skills.git#develop"
 zcode plugins install team-standards@team-agent-skills
-zcode plugins enable team-standards@team-agent-skills
 ```
 
-启用后到 设置 → Hooks 确认已出现 `Bash` matcher 的钩子，再新建会话。
+`install` 成功后插件即为启用状态（输出 `[enabled]`），`zcode plugins list` 中应显示 `skills: 10, hooks: 2`。然后**新建会话**。
 
-**dsh**（`<p>` 换成实际 profile 名，例如 `web`）
+**HuiMate**
 
-```bash
-dsh plugin --profile <p> add "git+https://github.com/LinYang-github/team-agent-skills.git#develop"
-```
+侧栏「专家 · 技能 · 连接器」→「插件」→「添加源」：
 
-dsh 还需要在 `dsh-skill-filesystem` 的 `customSkillDirs` 中加入包内 `skills` 目录的绝对路径。这种 pnpm 安装方式不会运行 Agent 钩子，必须做第 2 步。HuiMate 从插件市场安装时会通过 `dsh-hooks-claude-code` 桥接运行 Agent 钩子，需 0.1.4 及以上版本。详见 [插件安装与更新 · dsh](docs/插件安装与更新.md#dsh)。
+| 字段 | 填写 |
+| --- | --- |
+| 类型 | Git 仓库 |
+| git 仓库地址 | `https://github.com/LinYang-github/team-agent-skills.git` |
+| 分支（可选） | `develop` |
+
+保存后在插件列表中找到 `team-standards`，点击「安装」并确认，然后**新建会话**。HuiMate 通过 Claude 插件格式加载技能和 Agent 钩子，需要插件 0.1.4 及以上版本。
 
 ### 2. 在项目中启用 Git 钩子
 
@@ -63,14 +74,25 @@ dsh 还需要在 `dsh-skill-filesystem` 的 `customSkillDirs` 中加入包内 `s
 sh <插件目录>/hooks/lib/install-git-hooks.sh "/项目仓库绝对路径"
 ```
 
-不知道插件目录在哪：在项目里新建一次 Codex / ZCode 会话，插件会输出一行包含完整路径的启用命令。项目已使用 husky 或设置了 `core.hooksPath` 时，安装器会拒绝覆盖并退出，需要由项目维护者手动集成。
+`<插件目录>` 怎么找：
+
+- Codex / ZCode：在项目里新建一次会话，插件会输出一行包含完整路径的启用命令，复制运行即可。
+- 任何客户端通用：钩子安装后是自包含的，用任意一份本仓库副本运行都可以：
+
+  ```bash
+  git clone -b develop https://github.com/LinYang-github/team-agent-skills.git
+  sh team-agent-skills/hooks/lib/install-git-hooks.sh "/项目仓库绝对路径"
+  ```
+
+成功时输出 `已启用 team-standards <版本> 项目 Git 钩子。`。项目已使用 husky 或设置了 `core.hooksPath` 时，安装器会拒绝覆盖并退出，需要由项目维护者手动集成。
 
 ### 3. 验证是否生效
 
 | 检查项 | 方法 | 预期结果 |
 | --- | --- | --- |
 | 技能已加载 | 新建会话，问 Agent “列出 team-standards 提供的技能” | 能说出 `common-coding-standards` 等技能 |
-| Agent 钩子已信任 | Codex 启动时无 “need review” 提示；ZCode 设置 → Hooks 中可见 | 已信任 / 已启用 |
+| Agent 钩子已生效 | Codex 启动时无 “need review” 提示；ZCode 设置 → Hooks 中可见 `Bash` 钩子；HuiMate 插件详情的 Hooks 中可见 | 已信任 / 已启用 |
+| Agent 钩子能拦截 | 在项目里让 Agent 执行 `git checkout -b test123` | 命令执行前被拒绝，并提示团队分支命名规则 |
 | Agent 预检依赖 | `perl -MJSON::PP -e 'print "ok\n"'` | 输出 `ok` |
 | 项目 Git 钩子已启用 | 在项目里执行 `cat "$(git rev-parse --git-path hooks)/.team-standards-version"` | 输出插件版本号，例如 `0.1.4` |
 
@@ -95,11 +117,13 @@ sh <插件目录>/hooks/lib/install-git-hooks.sh "/项目仓库绝对路径"
 
 | 客户端 | 更新方式 |
 | --- | --- |
-| Codex | 每次启动会话自动更新市场和插件。更新后钩子会变成 “Modified since last trusted”，需要**重新信任** |
-| ZCode | `zcode plugins marketplace update`，再 `zcode plugins update team-standards@team-agent-skills`，然后新建会话 |
-| dsh | `dsh plugin --profile <p> update team-standards` |
+| Codex | 每次启动会话自动更新；也可手动执行 `codex plugin marketplace upgrade team-agent-skills`。更新后钩子会变成 “Modified since last trusted”，需要**重新信任** |
+| ZCode | `zcode plugins marketplace update team-agent-skills`，再 `zcode plugins update team-standards@team-agent-skills`，然后新建会话。桌面端在 设置 → 插件 中更新插件市场 |
+| HuiMate | 「插件」页点击「刷新全部」，再对 `team-standards` 执行更新（重新安装）并确认，然后新建会话 |
 
-已启用 Git 钩子的项目，会在下一次 Codex / ZCode 会话启动时自动升级钩子，不会降级。dsh 用户更新后需要重新运行第 2 步的安装命令。
+ZCode 的 `marketplace update` 请带上市场名：不带时会刷新全部市场，任一官方市场超时都会让命令返回失败。
+
+已启用 Git 钩子的项目，会在下一次 Codex / ZCode 会话启动时自动升级钩子，不会降级。HuiMate 用户更新插件后，建议重新运行第 2 步的安装命令。
 
 ## 常见问题
 
@@ -129,7 +153,7 @@ sh <插件目录>/hooks/lib/install-git-hooks.sh --uninstall "/项目仓库绝�
 codex plugin remove team-standards@team-agent-skills
 ```
 
-ZCode 在 设置 → 插件 中卸载；dsh 执行 `dsh plugin --profile <p> remove team-standards`，并从 `customSkillDirs` 删除对应路径。
+ZCode 在 设置 → 插件 中卸载，或执行 `zcode plugins uninstall team-standards@team-agent-skills`（非交互终端需加 `--force`）；HuiMate 在「插件」页对 `team-standards` 点击「卸载」。不再需要市场时，Codex 执行 `codex plugin marketplace remove team-agent-skills`，ZCode / HuiMate 在市场或来源管理中移除。
 
 ## 备用安装方式
 
