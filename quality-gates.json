@@ -100,6 +100,7 @@
     "pre_commit": [],
     "pre_push": [
       "./scripts/validate-skills.sh",
+      "./scripts/check-plugin-version-bump.sh",
       "./scripts/run-python.sh -m unittest discover -s tests -p 'test_*.py'"
     ]
   }

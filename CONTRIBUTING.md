@@ -54,6 +54,19 @@ release/v1.2.0
 - 不使用空格、中文、个人姓名、Agent 名称、随机字符串或 `tmp`、`new` 等无信息词语。
 - 分支只承载一个主题，名称建议不超过 60 个字符，合并后及时删除。
 
+开源或外部来源的 Skill 不纳入本仓库的内部版本治理。
+
+## 维护者环境
+
+除了 README 中列出的使用者依赖，维护本仓库还需要：
+
+| 依赖 | 用途 | 检查命令 |
+| --- | --- | --- |
+| Python 3 | 全量质量门禁、`validate-skills`、Git 规则生成和测试 | `python3 --version` |
+| [skill-up](docs/团队Skill测评报告.md) | 技能行为评测（仅修改技能行为时需要） | `skill-up --help` |
+
+脚本通过 `scripts/run-python.sh` 依次查找 `python3`、`python`、`py -3`，都找不到时报错退出。
+
 ## 开发和提交
 
 首次参与仓库维护时先启用本地质量门禁：
@@ -83,3 +96,27 @@ git switch -c <类型>/[<任务号>-]<简短描述>
 日常 Pull Request 以 `develop` 为目标分支；正式发布由 `release/*` 或 `develop` 向 `main` 发起。Pull Request 至少说明修改的 Skill、行为或边界影响、依赖同步、实际校验结果和已知限制。合并前必须通过 `./scripts/validate-skills.sh`。
 
 不得绕过 Pull Request 直接推送 `main` 和 `develop`，不得对任何共享分支强制推送。`pre-push` 会在本地阻断受保护分支直推；远端仍需配置分支保护和必需检查作为最终门禁。`release/*` 只承载发布准备修改，不得混入下一版本功能；紧急修复完成后必须将 `main` 中的修复同步回 `develop`。
+
+## 技能测评
+
+各 Skill 的 `evals/` 目录保存基于 `skill-up` 的行为评测。修改技能行为后单项复测：
+
+```bash
+skill-up run skills/<skill-name>/evals/eval.yaml --baseline --iteration 3
+```
+
+当前结果、评分口径和后续整改顺序见 [团队 Skill 测评报告](docs/团队Skill测评报告.md)。
+
+## 插件发版
+
+- 每次发版同时递增 `.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json`、`.agents/plugins/marketplace.json`、`.codex-plugin/plugin.json` 和 `package.json` 中的版本号；版本号不变时，已安装的项目 Git 钩子不会重新同步。
+- 相对 `origin/develop` 修改了 `hooks/lib/` 或 `quality-gates.json` 却没升版本号时，pre-push 会通过 `scripts/check-plugin-version-bump.sh` 拒绝推送。
+- 修改 `quality-gates.json` 后重新生成 Agent 和项目 Git 钩子使用的规则，并把 `hooks/lib/rules.generated.sh` 一起提交：
+
+```bash
+./scripts/run-python.sh scripts/generate-git-rules.py
+```
+
+- 新增或前置依赖变化时，同步更新 README 的“前置依赖”表。
+
+钩子协议和各客户端兼容细节见 [插件安装与更新](docs/插件安装与更新.md)。

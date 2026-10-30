@@ -1,0 +1,26 @@
+#!/bin/sh
+# SessionStart intentionally emits nothing outside repositories or during sync.
+set -eu
+HOOK_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+git rev-parse --git-dir >/dev/null 2>&1 || exit 0
+repo=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+hooks=$(git rev-parse --git-path hooks)
+case "$hooks" in /*|[A-Za-z]:/*) ;; *) hooks=$(pwd)/$hooks ;; esac
+marker=$hooks/.team-standards-version
+if [ -f "$marker" ] && [ -f "$hooks/team-standards/.managed" ]; then
+    installed=$(cat "$marker")
+    current=$(sed -n 's/^[[:space:]]*"version": "\([0-9][0-9.]*\)".*/\1/p' "$HOOK_DIR/../package.json")
+    # Numeric comparison, so 0.10.0 > 0.2.0; never downgrade a newer installation.
+    if awk -v old="$installed" -v new="$current" 'BEGIN {
+        if (old !~ /^[0-9]+\.[0-9]+\.[0-9]+$/ || new !~ /^[0-9]+\.[0-9]+\.[0-9]+$/) exit 1;
+        split(old,a,"."); split(new,b,".");
+        for(i=1;i<=3;i++) { if(b[i]+0>a[i]+0) exit 0; if(b[i]+0<a[i]+0) exit 1; }
+        exit 1;
+    }'; then
+        sh "$HOOK_DIR/lib/install-git-hooks.sh" "$repo" >/dev/null 2>&1 || :
+    fi
+else
+    # 这行文字会作为上下文交给模型：只请它转告用户，不能写成可直接执行的指令，
+    # 否则模型可能未经用户同意就修改项目的 .git/hooks（登录会话实测出现过）。
+    printf '[team-standards] 当前仓库未启用团队 Git 钩子（本地检查提交信息和推送分支）。请把下面的启用命令转告用户，由用户决定是否运行；未经用户明确同意，不要自行执行：sh "%s/lib/install-git-hooks.sh" "%s"（Windows 请在 Git Bash 中运行）\n' "$HOOK_DIR" "$repo"
+fi
