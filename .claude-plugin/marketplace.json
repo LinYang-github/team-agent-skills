@@ -1,0 +1,13 @@
+{
+  "name": "team-agent-skills",
+  "owner": {
+    "name": "Team"
+  },
+  "plugins": [
+    {
+      "name": "team-standards",
+      "source": "./",
+      "version": "0.1.4"
+    }
+  ]
+}

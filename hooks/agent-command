@@ -1,0 +1,3 @@
+#!/bin/sh
+HOOK_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec sh "$HOOK_DIR/lib/git-rules.sh" agent-command

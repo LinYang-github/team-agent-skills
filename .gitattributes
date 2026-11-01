@@ -1,0 +1,3 @@
+# Git for Windows must run the same LF scripts, including the polyglot entry.
+hooks/** text eol=lf
+scripts/generate-git-rules.py text eol=lf

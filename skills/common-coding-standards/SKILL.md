@@ -95,6 +95,7 @@ description: 统一跨语言、跨框架项目的通用编码实践，包括命�
 - 配置分层、命令行覆盖、前后端一体化交付、单服务部署、密钥、环境、依赖和在线资源边界：阅读 references/configuration-and-dependencies.md。
 - 测试分层、质量门禁和构建验证：阅读 references/testing-and-quality.md。
 - Git 提交、变更记录和分支协作：阅读 references/git-and-commits.md。
+  Git 分支、提交信息和受保护分支推送规则由 team-standards 插件的钩子强制执行；项目须按插件文档启用 Git 钩子。
 - 代码审查、交付说明和迁移记录：阅读 references/review-and-delivery.md。
 
 涉及具体语言或框架时，再读取对应的专项技能，不在本技能重复实现细节。
