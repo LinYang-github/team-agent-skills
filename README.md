@@ -10,11 +10,13 @@
 
 支持的客户端：Codex、ZCode、HuiMate。Claude、Grok 暂时用[备用安装脚本](#备用安装方式)。
 
-> 插件名 `team-standards`，市场名 `team-agent-skills`，默认跟随 `develop` 分支。三个客户端都是“添加市场地址 → 安装插件”两步，市场地址统一为：
+> 插件名 `team-standards`，默认跟随本仓库的 `develop` 分支。本仓库只是插件，不再自带市场清单：插件登记在团队总市场 [team-agent-marketplace](https://github.com/WuFuxiu/team-agent-marketplace)（市场名 `team-agent-marketplace`，私有仓库，需要读取权限）里，和团队其他插件一起分发。三个客户端都是“添加总市场地址 → 安装插件”两步，总市场地址统一为：
 >
-> `https://github.com/LinYang-github/team-agent-skills.git`，分支 `develop`
+> `https://github.com/WuFuxiu/team-agent-marketplace.git`，分支 `main`
 >
-> 内网使用时替换为团队仓库地址：HTTPS 地址保留结尾的 `.git`；SSH 使用 `git@host:group/repo.git` 形式。
+> 内网使用时替换为内网总市场的地址：HTTPS 地址保留结尾的 `.git`；SSH 使用 `git@host:group/repo.git` 形式。安装时客户端会按总市场里的地址去克隆本仓库，所以本仓库也要能访问。
+>
+> 以前直接添加本仓库为市场的，先按[卸载](#卸载)删掉 `team-standards@team-agent-skills` 并移除 `team-agent-skills` 市场，再从总市场安装；两边各装一份会重复加载。
 
 ## 前置依赖
 
@@ -35,21 +37,21 @@
 **Codex**
 
 ```bash
-codex plugin marketplace add https://github.com/LinYang-github/team-agent-skills.git --ref develop
-codex plugin add team-standards@team-agent-skills
+codex plugin marketplace add https://github.com/WuFuxiu/team-agent-marketplace.git --ref main
+codex plugin add team-standards@team-agent-marketplace
 ```
 
-也可以在 Codex 里输入 `/plugins`，从 `team-agent-skills` 市场安装。安装后**新建会话**，启动时会提示 “N hooks need review”，选择 **Trust all and continue**。不信任或使用无头 `codex exec` 时，Agent 钩子不会运行。
+也可以在 Codex 里输入 `/plugins`，从“团队 Agent 插件市场”安装。安装后**新建会话**，启动时会提示 “N hooks need review”，选择 **Trust all and continue**。不信任或使用无头 `codex exec` 时，Agent 钩子不会运行。
 
 **ZCode**
 
-桌面端：设置 → 插件 → 右上角「创建」→「添加插件市场」，地址填 `https://github.com/LinYang-github/team-agent-skills.git#develop`（分支用 `#` 接在 `.git` 后面），添加后在插件列表中安装 `team-standards`。
+桌面端：设置 → 插件 → 右上角「创建」→「添加插件市场」，地址填 `https://github.com/WuFuxiu/team-agent-marketplace.git#main`（分支用 `#` 接在 `.git` 后面），添加后在插件列表中安装 `team-standards`。
 
 命令行（需要已安装 `zcode` CLI）：
 
 ```bash
-zcode plugins marketplace add "https://github.com/LinYang-github/team-agent-skills.git#develop"
-zcode plugins install team-standards@team-agent-skills
+zcode plugins marketplace add "https://github.com/WuFuxiu/team-agent-marketplace.git#main"
+zcode plugins install team-standards@team-agent-marketplace
 ```
 
 `install` 成功后插件即为启用状态（输出 `[enabled]`），`zcode plugins list` 中应显示 `skills: 10, hooks: 2`。然后**新建会话**。
@@ -61,8 +63,8 @@ zcode plugins install team-standards@team-agent-skills
 | 字段 | 填写 |
 | --- | --- |
 | 类型 | Git 仓库 |
-| git 仓库地址 | `https://github.com/LinYang-github/team-agent-skills.git` |
-| 分支（可选） | `develop` |
+| git 仓库地址 | `https://github.com/WuFuxiu/team-agent-marketplace.git` |
+| 分支（可选） | `main` |
 
 保存后在插件列表中找到 `team-standards`，点击「安装」并确认，然后**新建会话**。HuiMate 通过 Claude 插件格式加载技能和 Agent 钩子，需要插件 0.1.4 及以上版本。
 
@@ -117,8 +119,8 @@ sh <插件目录>/hooks/lib/install-git-hooks.sh "/项目仓库绝对路径"
 
 | 客户端 | 更新方式 |
 | --- | --- |
-| Codex | 每次启动会话自动更新；也可手动执行 `codex plugin marketplace upgrade team-agent-skills`。更新后钩子会变成 “Modified since last trusted”，需要**重新信任** |
-| ZCode | `zcode plugins marketplace update team-agent-skills`，再 `zcode plugins update team-standards@team-agent-skills`，然后新建会话。桌面端在 设置 → 插件 中更新插件市场 |
+| Codex | 每次启动会话自动更新；也可手动执行 `codex plugin marketplace upgrade team-agent-marketplace`。更新后钩子会变成 “Modified since last trusted”，需要**重新信任** |
+| ZCode | `zcode plugins marketplace update team-agent-marketplace`，再 `zcode plugins update team-standards@team-agent-marketplace`，然后新建会话。桌面端在 设置 → 插件 中更新插件市场 |
 | HuiMate | 「插件」页点击「刷新全部」，再对 `team-standards` 执行更新（重新安装）并确认，然后新建会话 |
 
 ZCode 的 `marketplace update` 请带上市场名：不带时会刷新全部市场，任一官方市场超时都会让命令返回失败。
@@ -150,10 +152,12 @@ ZCode 的 `marketplace update` 请带上市场名：不带时会刷新全部市�
 
 ```bash
 sh <插件目录>/hooks/lib/install-git-hooks.sh --uninstall "/项目仓库绝对路径"
-codex plugin remove team-standards@team-agent-skills
+codex plugin remove team-standards@team-agent-marketplace
 ```
 
-ZCode 在 设置 → 插件 中卸载，或执行 `zcode plugins uninstall team-standards@team-agent-skills`（非交互终端需加 `--force`）；HuiMate 在「插件」页对 `team-standards` 点击「卸载」。不再需要市场时，Codex 执行 `codex plugin marketplace remove team-agent-skills`，ZCode / HuiMate 在市场或来源管理中移除。
+ZCode 在 设置 → 插件 中卸载，或执行 `zcode plugins uninstall team-standards@team-agent-marketplace`（非交互终端需加 `--force`）；HuiMate 在「插件」页对 `team-standards` 点击「卸载」。总市场里还有团队其他插件，一般不需要移除市场。
+
+从旧地址迁移时，卸载的是旧标识 `team-standards@team-agent-skills`，再移除旧市场：Codex 执行 `codex plugin marketplace remove team-agent-skills`，ZCode / HuiMate 在市场或来源管理中移除 `team-agent-skills`。
 
 ## 备用安装方式
 

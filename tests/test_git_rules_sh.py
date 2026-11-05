@@ -347,14 +347,9 @@ class ShellRulesTests(unittest.TestCase):
                     self.assertNotIn("hooks", manifest)
                 else:
                     self.assertEqual(manifest["hooks"], "./hooks/hooks.json")
+        # 市场清单在团队总市场仓库，本仓库只是插件；同时保留市场文件会让用户从两个市场各装一份。
         for filename in (".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json"):
-            manifest = json.loads((ROOT / filename).read_text())
-            self.assertEqual(manifest["name"], "team-agent-skills")
-            entry, = manifest["plugins"]
-            self.assertEqual(entry["name"], "team-standards")
-            source = entry["source"]
-            self.assertEqual(source["url"] if isinstance(source, dict) else source, "./")
-            versions.append(entry["version"])
+            self.assertFalse((ROOT / filename).exists(), filename)
         self.assertRegex(PLUGIN_VERSION, r"^[0-9]+\.[0-9]+\.[0-9]+$")
         self.assertEqual(set(versions), {PLUGIN_VERSION})
         package = json.loads((ROOT / "package.json").read_text())

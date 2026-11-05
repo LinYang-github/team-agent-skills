@@ -6,7 +6,6 @@
   "files": [
     "skills/",
     "hooks/",
-    ".agents/plugins/marketplace.json",
     ".claude-plugin/",
     ".codex-plugin/",
     "docs/插件安装与更新.md",

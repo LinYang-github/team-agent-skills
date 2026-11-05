@@ -27,7 +27,7 @@ new=$(version_of < package.json)
 if [ -n "$old" ] && [ "$old" = "$new" ]; then
     echo "[ERROR] 以下文件会被复制进各项目的 Git 钩子，但插件版本号仍是 ${new}：" >&2
     printf '  %s\n' $changed >&2
-    echo "请同步升级 package.json、.codex-plugin/plugin.json、.claude-plugin/plugin.json、两个 marketplace.json 中的 version。" >&2
+    echo "请同步升级 package.json、.codex-plugin/plugin.json、.claude-plugin/plugin.json 中的 version。" >&2
     exit 1
 fi
 echo "[PASS] 插件版本号检查（${old} -> ${new}）"
