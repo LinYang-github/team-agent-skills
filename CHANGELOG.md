@@ -2,6 +2,8 @@
 
 ## 未发布
 
+- 市场清单移到团队总市场 team-agent-marketplace：删除本仓库的两个 `marketplace.json`，版本号同步从五处改为三处，安装、更新和卸载说明改用总市场地址，并补充从旧市场迁移的步骤。
+
 - team-standards 0.1.4：增加 Windows PowerShell 钩子入口，将违规结果转为结构化 `deny`，修复 HuiMate 中钩子启动语法错误及非零退出码被 PowerShell 转为 `1` 后放行的问题；补充真实 cmd / PowerShell 启动与 UTF-8 回归。
 
 - team-standards 0.1.3：为 Agent 预检补充 `bash` 和 `pwsh` 工具匹配，修复 HuiMate / DeepSeek Harness 中团队 Git 规则未被调用的问题，并增加工具选择与阻断回归验证。
