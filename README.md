@@ -10,9 +10,9 @@
 
 支持的客户端：Codex、ZCode、HuiMate。Claude、Grok 暂时用[备用安装脚本](#备用安装方式)。
 
-> 插件名 `team-standards`，默认跟随本仓库的 `develop` 分支。本仓库只是插件，不再自带市场清单：插件登记在团队总市场 [team-agent-marketplace](https://github.com/LinYang-github/team-agent-marketplace)（市场名 `team-agent-marketplace`）里，和团队其他插件一起分发。三个客户端都是“添加总市场地址 → 安装插件”两步，总市场地址统一为：
+> 插件名 `team-standards`，默认跟随本仓库的 `develop` 分支。本仓库只是插件，不再自带市场清单：插件登记在团队总市场 [team-agent-marketplace](https://github.com/WuFuxiu/team-agent-marketplace)（市场名 `team-agent-marketplace`，私有仓库，需要读取权限）里，和团队其他插件一起分发。三个客户端都是“添加总市场地址 → 安装插件”两步，总市场地址统一为：
 >
-> `https://github.com/LinYang-github/team-agent-marketplace.git`，分支 `main`
+> `https://github.com/WuFuxiu/team-agent-marketplace.git`，分支 `main`
 >
 > 内网使用时替换为内网总市场的地址：HTTPS 地址保留结尾的 `.git`；SSH 使用 `git@host:group/repo.git` 形式。安装时客户端会按总市场里的地址去克隆本仓库，所以本仓库也要能访问。
 >
@@ -37,7 +37,7 @@
 **Codex**
 
 ```bash
-codex plugin marketplace add https://github.com/LinYang-github/team-agent-marketplace.git --ref main
+codex plugin marketplace add https://github.com/WuFuxiu/team-agent-marketplace.git --ref main
 codex plugin add team-standards@team-agent-marketplace
 ```
 
@@ -45,12 +45,12 @@ codex plugin add team-standards@team-agent-marketplace
 
 **ZCode**
 
-桌面端：设置 → 插件 → 右上角「创建」→「添加插件市场」，地址填 `https://github.com/LinYang-github/team-agent-marketplace.git#main`（分支用 `#` 接在 `.git` 后面），添加后在插件列表中安装 `team-standards`。
+桌面端：设置 → 插件 → 右上角「创建」→「添加插件市场」，地址填 `https://github.com/WuFuxiu/team-agent-marketplace.git#main`（分支用 `#` 接在 `.git` 后面），添加后在插件列表中安装 `team-standards`。
 
 命令行（需要已安装 `zcode` CLI）：
 
 ```bash
-zcode plugins marketplace add "https://github.com/LinYang-github/team-agent-marketplace.git#main"
+zcode plugins marketplace add "https://github.com/WuFuxiu/team-agent-marketplace.git#main"
 zcode plugins install team-standards@team-agent-marketplace
 ```
 
@@ -63,7 +63,7 @@ zcode plugins install team-standards@team-agent-marketplace
 | 字段 | 填写 |
 | --- | --- |
 | 类型 | Git 仓库 |
-| git 仓库地址 | `https://github.com/LinYang-github/team-agent-marketplace.git` |
+| git 仓库地址 | `https://github.com/WuFuxiu/team-agent-marketplace.git` |
 | 分支（可选） | `main` |
 
 保存后在插件列表中找到 `team-standards`，点击「安装」并确认，然后**新建会话**。HuiMate 通过 Claude 插件格式加载技能和 Agent 钩子，需要插件 0.1.4 及以上版本。

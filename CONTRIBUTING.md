@@ -110,7 +110,7 @@ skill-up run skills/<skill-name>/evals/eval.yaml --baseline --iteration 3
 ## 插件发版
 
 - 每次发版同时递增 `.claude-plugin/plugin.json`、`.codex-plugin/plugin.json` 和 `package.json` 中的版本号；版本号不变时，已安装的项目 Git 钩子不会重新同步。
-- 本仓库只是插件，不放 `marketplace.json`。插件登记在团队总市场 [team-agent-marketplace](https://github.com/LinYang-github/team-agent-marketplace) 中，条目不写版本号，发版时不用改总市场。
+- 本仓库只是插件，不放 `marketplace.json`。插件登记在团队总市场 [team-agent-marketplace](https://github.com/WuFuxiu/team-agent-marketplace) 中，条目不写版本号，发版时不用改总市场。
 - 相对 `origin/develop` 修改了 `hooks/lib/` 或 `quality-gates.json` 却没升版本号时，pre-push 会通过 `scripts/check-plugin-version-bump.sh` 拒绝推送。
 - 修改 `quality-gates.json` 后重新生成 Agent 和项目 Git 钩子使用的规则，并把 `hooks/lib/rules.generated.sh` 一起提交：
 
